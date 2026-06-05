@@ -1,0 +1,6 @@
+{
+  "name": "Consulta CNPJ Premium",
+  "description": "Uma elegante plataforma estilo dashboard SaaS para consulta rápida de CNPJ com análise detalhada, gráficos, métricas e visualizador de JSON bruto.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
