@@ -58,13 +58,6 @@ export default function App() {
         
         {/* Workspace Brand / Header */}
         <header className="text-center space-y-3.5 max-w-2xl mx-auto">
-          <div className="inline-flex items-center gap-2 border border-zinc-900 bg-zinc-950/60 p-1.5 px-3 rounded-full hover:border-zinc-800 transition">
-            <span className="w-2 h-2 rounded-full bg-zinc-400 animate-pulse"></span>
-            <span className="text-[10px] font-mono uppercase tracking-widest font-extrabold text-zinc-400">
-              SaaS Engine Ativo
-            </span>
-          </div>
-          
           <h1 className="text-3xl md:text-5xl font-extrabold font-display tracking-tight text-white select-none">
             Consulta <span className="text-gradient bg-clip-text text-transparent bg-gradient-to-r from-zinc-100 via-zinc-300 to-zinc-450">CNPJ Premium</span>
           </h1>
