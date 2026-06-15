@@ -176,10 +176,10 @@ export default function InputCNPJ({ onSearch, onClear, isLoading, hasResult }: I
               Banco do Brasil (00.000.000/0001-91)
             </button>
             <button
-              onClick={() => handleTryDemo('191')}
+              onClick={() => handleTryDemo('33000167000101')}
               className="px-3 py-1 bg-zinc-900/60 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 border border-zinc-800/80 rounded-lg text-xs font-mono transition"
             >
-              Petrobras (00.000.191/0001-65)
+              Petrobras (33.000.167/0001-01)
             </button>
             <button
               onClick={() => handleTryDemo('06990590000123')}
