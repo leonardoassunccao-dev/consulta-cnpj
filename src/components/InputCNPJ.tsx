@@ -167,25 +167,31 @@ export default function InputCNPJ({ onSearch, onClear, isLoading, hasResult }: I
 
       {!inputValue && !hasResult && !isLoading && (
         <div className="flex flex-col items-center gap-2 pt-2">
-          <p className="text-xs text-zinc-500 uppercase tracking-widest font-mono">Sugestões de CNPJ para teste:</p>
+          <p className="text-xs text-zinc-500 uppercase tracking-widest font-mono">CONSULTAS RÁPIDAS TELOG</p>
           <div className="flex flex-wrap justify-center gap-2">
             <button
-              onClick={() => handleTryDemo('00000000000191')}
-              className="px-3 py-1 bg-zinc-900/60 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 border border-zinc-800/80 rounded-lg text-xs font-mono transition"
+              onClick={() => handleTryDemo('19210785000155')}
+              className="px-3 py-1.5 bg-zinc-900/60 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 border border-zinc-800/80 rounded-lg text-xs font-sans font-medium transition flex items-center gap-1.5 shadow-md hover:border-zinc-700"
             >
-              Banco do Brasil (00.000.000/0001-91)
+              🏢 TELOG Matriz
             </button>
             <button
-              onClick={() => handleTryDemo('33000167000101')}
-              className="px-3 py-1 bg-zinc-900/60 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 border border-zinc-800/80 rounded-lg text-xs font-mono transition"
+              onClick={() => handleTryDemo('19210785000317')}
+              className="px-3 py-1.5 bg-zinc-900/60 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 border border-zinc-800/80 rounded-lg text-xs font-sans font-medium transition flex items-center gap-1.5 shadow-md hover:border-zinc-700"
             >
-              Petrobras (33.000.167/0001-01)
+              📍 TELOG São Paulo
             </button>
             <button
-              onClick={() => handleTryDemo('06990590000123')}
-              className="px-3 py-1 bg-zinc-900/60 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 border border-zinc-800/80 rounded-lg text-xs font-mono transition"
+              onClick={() => handleTryDemo('19210785000589')}
+              className="px-3 py-1.5 bg-zinc-900/60 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 border border-zinc-800/80 rounded-lg text-xs font-sans font-medium transition flex items-center gap-1.5 shadow-md hover:border-zinc-700"
             >
-              Google Brasil (06.990.590/0001-23)
+              📍 TELOG São José do Rio Preto
+            </button>
+            <button
+              onClick={() => handleTryDemo('19210785000902')}
+              className="px-3 py-1.5 bg-zinc-900/60 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 border border-zinc-800/80 rounded-lg text-xs font-sans font-medium transition flex items-center gap-1.5 shadow-md hover:border-zinc-700"
+            >
+              📍 TELOG Porto Alegre
             </button>
           </div>
         </div>

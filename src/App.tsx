@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useCNPJ } from './hooks/useCNPJ';
 import InputCNPJ from './components/InputCNPJ';
 import ResumoEmpresa from './components/ResumoEmpresa';
+import FiliaisTelog from './components/FiliaisTelog';
 import InscricoesEstaduais from './components/InscricoesEstaduais';
 import Metricas from './components/Metricas';
 import JsonExplorer from './components/JsonExplorer';
@@ -165,6 +166,13 @@ export default function App() {
 
               {/* Enterprise Summary panel */}
               <ResumoEmpresa data={data} />
+
+              {/* Hub de Filiais TELOG */}
+              <FiliaisTelog
+                currentCnpj={data?.estabelecimento?.cnpj || data?.cnpj || ''}
+                onSelectFilial={consultarCNPJ}
+                isLoading={isLoading}
+              />
 
               {/* Layout columns for IE registrations & secondary tasks */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
