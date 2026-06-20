@@ -16,7 +16,6 @@ interface FiliaisTelogProps {
 export const FILIAIS_DATA: Filial[] = [
   { nome: 'TELOG São Paulo', cnpj: '19210785000317', uf: 'SP', cidade: 'São Paulo' },
   { nome: 'TELOG Piracicaba', cnpj: '19210785000236', uf: 'SP', cidade: 'Piracicaba' },
-  { nome: 'TELOG São José do Rio Preto', cnpj: '19210785000589', uf: 'SP', cidade: 'São José do Rio Preto' },
   { nome: 'TELOG Itumbiara', cnpj: '19210785000660', uf: 'GO', cidade: 'Itumbiara' },
   { nome: 'TELOG Dourados', cnpj: '19210785000740', uf: 'MS', cidade: 'Dourados' },
   { nome: 'TELOG Goiânia', cnpj: '19210785000821', uf: 'GO', cidade: 'Goiânia' },
@@ -55,7 +54,7 @@ export default function FiliaisTelog({ currentCnpj, onSelectFilial, isLoading }:
             </h3>
           </div>
           <p className="text-xs text-zinc-500">
-            Total de 9 filiais ativas organizadas por região de atuação logística.
+            Total de {FILIAIS_DATA.length} filiais ativas organizadas por região de atuação logística.
           </p>
         </div>
 

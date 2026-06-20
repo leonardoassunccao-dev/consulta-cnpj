@@ -176,22 +176,22 @@ export default function InputCNPJ({ onSearch, onClear, isLoading, hasResult }: I
               🏢 TELOG Matriz
             </button>
             <button
+              onClick={() => handleTryDemo('19210785000236')}
+              className="px-3 py-1.5 bg-zinc-900/60 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 border border-zinc-800/80 rounded-lg text-xs font-sans font-medium transition flex items-center gap-1.5 shadow-md hover:border-zinc-700"
+            >
+              📍 TELOG Piracicaba
+            </button>
+            <button
               onClick={() => handleTryDemo('19210785000317')}
               className="px-3 py-1.5 bg-zinc-900/60 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 border border-zinc-800/80 rounded-lg text-xs font-sans font-medium transition flex items-center gap-1.5 shadow-md hover:border-zinc-700"
             >
               📍 TELOG São Paulo
             </button>
             <button
-              onClick={() => handleTryDemo('19210785000589')}
+              onClick={() => handleTryDemo('19210785000660')}
               className="px-3 py-1.5 bg-zinc-900/60 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 border border-zinc-800/80 rounded-lg text-xs font-sans font-medium transition flex items-center gap-1.5 shadow-md hover:border-zinc-700"
             >
-              📍 TELOG São José do Rio Preto
-            </button>
-            <button
-              onClick={() => handleTryDemo('19210785000902')}
-              className="px-3 py-1.5 bg-zinc-900/60 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 border border-zinc-800/80 rounded-lg text-xs font-sans font-medium transition flex items-center gap-1.5 shadow-md hover:border-zinc-700"
-            >
-              📍 TELOG Porto Alegre
+              📍 TELOG Itumbiara
             </button>
           </div>
         </div>
