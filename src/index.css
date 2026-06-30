@@ -7,6 +7,15 @@
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
+/* Premium grid background pattern and subtle top glow */
+.bg-grid-premium {
+  background-image: 
+    radial-gradient(circle at top, rgba(24, 24, 27, 0.5) 0%, rgba(9, 9, 11, 1) 100%),
+    radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.035) 1px, transparent 0);
+  background-size: 100% 100%, 28px 28px;
+  background-attachment: fixed;
+}
+
 /* Custom fine scrollbar controls */
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
