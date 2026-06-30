@@ -85,15 +85,7 @@ export default function App() {
             </div>
           </div>
 
-          {/* Right Action Button */}
-          <div>
-            <button 
-              onClick={limpar}
-              className="px-4 py-2 text-xs font-bold bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-800 hover:border-zinc-700 rounded-xl transition duration-150 active:scale-95 shadow-md cursor-pointer"
-            >
-              Consultar
-            </button>
-          </div>
+
         </div>
       </nav>
 
