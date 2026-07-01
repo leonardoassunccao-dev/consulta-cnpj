@@ -25,7 +25,7 @@ export default function VisualizadorEmpresaTabs({ data, onFavoriteToggle }: Visu
   const porte = data?.porte || {};
   const natureza = data?.natureza_juridica || {};
   const atividadePrincipal = estab?.atividade_principal || {};
-  const atividadesSecundarias = estab?.atividades_secundarias || [];
+  const atividadesSecundarias = Array.isArray(estab?.atividades_secundarias) ? estab.atividades_secundarias : [];
   const cidade = estab?.cidade || {};
   const estado = estab?.estado || {};
 
@@ -666,7 +666,7 @@ CNAE Principal: ${atividadePrincipalDesc}
               <h3 className="text-base font-bold text-white">Quadro de Sócios e Administradores (QSA)</h3>
             </div>
 
-            {data.socios && data.socios.length > 0 ? (
+            {Array.isArray(data?.socios) && data.socios.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {data.socios.map((socio: any, i: number) => (
                   <div key={i} className="p-4 bg-zinc-900/30 border border-zinc-900 rounded-xl flex items-center justify-between gap-4">

@@ -7,6 +7,7 @@ import ErrorState from './components/ErrorState';
 import VisualizadorEmpresaTabs from './components/VisualizadorEmpresaTabs';
 import HistoricoFavoritos from './components/HistoricoFavoritos';
 import PlatformMockup from './components/PlatformMockup';
+import ErrorBoundary from './components/ErrorBoundary';
 
 export default function App() {
   const {
@@ -117,37 +118,38 @@ export default function App() {
 
         {/* Core details workspace */}
         <section className="relative min-h-[300px]">
-          
-          {/* 1. Loader State */}
-          {isLoading && <LoadingSkeleton />}
+          <ErrorBoundary onReset={limpar}>
+            {/* 1. Loader State */}
+            {isLoading && <LoadingSkeleton />}
 
-          {/* 2. Error State */}
-          {!isLoading && error && (
-            <ErrorState
-              error={error}
-              errorType={errorType}
-              onClear={limpar}
-            />
-          )}
-
-          {/* 3. Successful State */}
-          {!isLoading && !error && data && (
-            <div className="space-y-8 animate-fade-in text-zinc-300">
-              
-              <VisualizadorEmpresaTabs
-                data={data}
-                onFavoriteToggle={() => setRefreshTrigger(prev => prev + 1)}
+            {/* 2. Error State */}
+            {!isLoading && error && (
+              <ErrorState
+                error={error}
+                errorType={errorType}
+                onClear={limpar}
               />
+            )}
 
-              {/* Hub de Filiais TELOG */}
-              <FiliaisTelog
-                currentCnpj={data?.estabelecimento?.cnpj || data?.cnpj || ''}
-                onSelectFilial={consultarCNPJ}
-                isLoading={isLoading}
-              />
+            {/* 3. Successful State */}
+            {!isLoading && !error && data && (
+              <div className="space-y-8 animate-fade-in text-zinc-300">
+                
+                <VisualizadorEmpresaTabs
+                  data={data}
+                  onFavoriteToggle={() => setRefreshTrigger(prev => prev + 1)}
+                />
 
-            </div>
-          )}
+                {/* Hub de Filiais TELOG */}
+                <FiliaisTelog
+                  currentCnpj={data?.estabelecimento?.cnpj || data?.cnpj || ''}
+                  onSelectFilial={consultarCNPJ}
+                  isLoading={isLoading}
+                />
+
+              </div>
+            )}
+          </ErrorBoundary>
 
           {/* 4. Elegant Initial Placeholder State / Marketing Landing page */}
           {!isLoading && !error && !data && (

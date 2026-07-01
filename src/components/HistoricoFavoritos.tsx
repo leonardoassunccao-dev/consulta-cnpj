@@ -32,14 +32,28 @@ export default function HistoricoFavoritos({ onSelect, isLoading, refreshTrigger
     try {
       const historyCached = localStorage.getItem('premium_cnpj_history');
       if (historyCached) {
-        setHistory(JSON.parse(historyCached));
+        try {
+          const parsed = JSON.parse(historyCached);
+          setHistory(Array.isArray(parsed) ? parsed : []);
+        } catch (inner) {
+          console.error('Error parsing premium_cnpj_history, clearing item:', inner);
+          localStorage.removeItem('premium_cnpj_history');
+          setHistory([]);
+        }
       } else {
         setHistory([]);
       }
 
       const favsCached = localStorage.getItem('premium_cnpj_favorites');
       if (favsCached) {
-        setFavorites(JSON.parse(favsCached));
+        try {
+          const parsed = JSON.parse(favsCached);
+          setFavorites(Array.isArray(parsed) ? parsed : []);
+        } catch (inner) {
+          console.error('Error parsing premium_cnpj_favorites, clearing item:', inner);
+          localStorage.removeItem('premium_cnpj_favorites');
+          setFavorites([]);
+        }
       } else {
         setFavorites([]);
       }
@@ -143,23 +157,23 @@ export default function HistoricoFavoritos({ onSelect, isLoading, refreshTrigger
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {history.map((item) => (
               <div
-                key={item.cnpj}
-                onClick={() => !isLoading && onSelect(item.cnpj)}
+                key={item?.cnpj || Math.random().toString()}
+                onClick={() => item?.cnpj && !isLoading && onSelect(item.cnpj)}
                 className="group p-4 bg-zinc-900/10 hover:bg-zinc-900/35 border border-zinc-900 hover:border-zinc-800 rounded-xl cursor-pointer transition-all duration-300 flex items-start justify-between gap-4"
               >
                 <div className="space-y-1 overflow-hidden">
                   <h4 className="text-xs font-semibold text-zinc-300 group-hover:text-white transition truncate capitalize leading-snug">
-                    {item.razaoSocial.toLowerCase()}
+                    {String(item?.razaoSocial || 'Sem Razão Social').toLowerCase()}
                   </h4>
                   <div className="flex items-center gap-1.5 text-[10px] font-mono text-zinc-500">
-                    <span>{formatCNPJ(item.cnpj)}</span>
+                    <span>{formatCNPJ(item?.cnpj)}</span>
                     <span>•</span>
-                    <span className="truncate">{item.cidade}/{item.uf}</span>
+                    <span className="truncate">{item?.cidade || 'Não informada'}/{item?.uf || 'UF'}</span>
                   </div>
                 </div>
                 
                 <button
-                  onClick={(e) => handleRemoveHistoryItem(item.cnpj, e)}
+                  onClick={(e) => item?.cnpj && handleRemoveHistoryItem(item.cnpj, e)}
                   className="text-zinc-600 hover:text-zinc-400 p-1 hover:bg-zinc-900/60 rounded-md transition"
                   title="Remover do histórico"
                 >
@@ -180,23 +194,23 @@ export default function HistoricoFavoritos({ onSelect, isLoading, refreshTrigger
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {favorites.map((item) => (
               <div
-                key={item.cnpj}
-                onClick={() => !isLoading && onSelect(item.cnpj)}
+                key={item?.cnpj || Math.random().toString()}
+                onClick={() => item?.cnpj && !isLoading && onSelect(item.cnpj)}
                 className="group p-4 bg-zinc-900/10 hover:bg-zinc-900/35 border border-zinc-900 hover:border-zinc-800 rounded-xl cursor-pointer transition-all duration-300 flex items-start justify-between gap-4"
               >
                 <div className="space-y-1 overflow-hidden">
                   <h4 className="text-xs font-semibold text-zinc-300 group-hover:text-white transition truncate capitalize leading-snug">
-                    {item.razaoSocial.toLowerCase()}
+                    {String(item?.razaoSocial || 'Sem Razão Social').toLowerCase()}
                   </h4>
                   <div className="flex items-center gap-1.5 text-[10px] font-mono text-zinc-500">
-                    <span>{formatCNPJ(item.cnpj)}</span>
+                    <span>{formatCNPJ(item?.cnpj)}</span>
                     <span>•</span>
-                    <span className="truncate">{item.cidade}/{item.uf}</span>
+                    <span className="truncate">{item?.cidade || 'Não informada'}/{item?.uf || 'UF'}</span>
                   </div>
                 </div>
                 
                 <button
-                  onClick={(e) => handleRemoveFavorite(item.cnpj, e)}
+                  onClick={(e) => item?.cnpj && handleRemoveFavorite(item.cnpj, e)}
                   className="text-amber-500/80 hover:text-red-400 p-1 hover:bg-zinc-900/60 rounded-md transition"
                   title="Remover dos favoritos"
                 >

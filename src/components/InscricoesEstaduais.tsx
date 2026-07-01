@@ -24,7 +24,7 @@ export default function InscricoesEstaduais({ data }: InscricoesEstaduaisProps) 
   const [isAccordionOpen, setIsAccordionOpen] = useState<boolean>(false);
 
   const estab = data?.estabelecimento || {};
-  const list: IEItem[] = estab.inscricoes_estaduais || [];
+  const list: IEItem[] = Array.isArray(estab.inscricoes_estaduais) ? estab.inscricoes_estaduais : [];
   
   // Rule 1: Get the establishment's major state
   const siglaEstadoPrincipal = (estab.estado?.sigla || estab.uf || '').toUpperCase();
