@@ -36,6 +36,7 @@ export default class ErrorBoundary extends React.Component<Props, State> {
   private handleClearQuery = () => {
     try {
       localStorage.removeItem('premium_cnpj_last_result');
+      sessionStorage.removeItem('premium_cnpj_last_result');
     } catch (e) {
       // ignore
     }

@@ -10,7 +10,7 @@ export interface UseCNPJResult {
   limpar: () => void;
 }
 
-const LOCAL_STORAGE_KEY = 'premium_cnpj_last_result';
+const SESSION_STORAGE_KEY = 'premium_cnpj_last_result';
 
 export function useCNPJ(): UseCNPJResult {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -21,7 +21,8 @@ export function useCNPJ(): UseCNPJResult {
   // Restore last query on initialization
   useEffect(() => {
     try {
-      const cached = localStorage.getItem(LOCAL_STORAGE_KEY);
+      localStorage.removeItem(SESSION_STORAGE_KEY);
+      const cached = sessionStorage.getItem(SESSION_STORAGE_KEY);
       if (cached) {
         const parsed = JSON.parse(cached);
         if (parsed && typeof parsed === 'object') {
@@ -46,7 +47,7 @@ export function useCNPJ(): UseCNPJResult {
         setError(null);
         setErrorType(null);
         try {
-          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(response.data));
+          sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(response.data));
         } catch (e) {
           // Local storage quota exceeded or disabled
         }
@@ -73,7 +74,7 @@ export function useCNPJ(): UseCNPJResult {
     setErrorType(null);
     setIsLoading(false);
     try {
-      localStorage.removeItem(LOCAL_STORAGE_KEY);
+      sessionStorage.removeItem(SESSION_STORAGE_KEY);
     } catch (e) {
       // Local storage issues
     }

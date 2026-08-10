@@ -2,16 +2,12 @@
  * Vercel Serverless Function for CNPJ search.
  * Path: /api/cnpj/[cnpj].ts
  */
+import { allowRequest, requestIdentity } from '../_lib/rateLimit';
+import { withProviderGuard } from '../_lib/providerGuard';
 
 export default async function handler(req: any, res: any) {
-  // CORS configuration for Vercel functions (just in case they need to allow external origins)
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
-  );
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Cache-Control', 'public, s-maxage=1800, stale-while-revalidate=3600');
 
   // Handle preflight requests
   if (req.method === 'OPTIONS') {
@@ -23,6 +19,7 @@ export default async function handler(req: any, res: any) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Método não permitido. Use GET.' });
   }
+  if (!allowRequest(`company:${requestIdentity(req.headers)}`, 60)) return res.status(429).json({ error: 'Muitas consultas em sequência. Aguarde um instante.' });
 
   // extract CNPJ from query (Vercel automatic routing matches [cnpj])
   const { cnpj } = req.query;
@@ -43,13 +40,14 @@ export default async function handler(req: any, res: any) {
   const publicApiUrl = `https://publica.cnpj.ws/cnpj/${cnpjLimpo}`;
 
   try {
-    const apiResponse = await fetch(publicApiUrl, {
+    const apiResponse = await withProviderGuard(() => fetch(publicApiUrl, {
       method: 'GET',
+      signal: AbortSignal.timeout(12_000),
       headers: {
         'Accept': 'application/json',
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) CNPJ-Lookup-Dashboard',
       },
-    });
+    }));
 
     if (apiResponse.status === 404) {
       return res.status(404).json({ error: 'CNPJ não encontrado na base de dados.' });
@@ -71,9 +69,9 @@ export default async function handler(req: any, res: any) {
     return res.status(200).json(data);
 
   } catch (error: any) {
-    console.error('SERVER ERROR:', error);
+    console.error('CNPJ_PROVIDER_ERROR', error instanceof Error ? error.name : 'UnknownError');
     return res.status(500).json({
-      error: 'Erro interno ao consultar o CNPJ. Detalhes: ' + (error.message || String(error)),
+      error: 'Não foi possível realizar a consulta agora.',
     });
   }
 }
