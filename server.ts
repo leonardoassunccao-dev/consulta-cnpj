@@ -21,7 +21,7 @@ async function startServer() {
   });
 
   app.get('/api/search', async (req, res) => {
-    if (!allowRequest(`search:${req.ip}`, 40)) return res.status(429).json({ error: 'Muitas buscas em sequência. Aguarde um instante.' });
+    if (!allowRequest(`search:${req.ip}`, 30)) return res.status(429).json({ error: 'Muitas buscas em sequência. Aguarde um instante.' });
     const q = sanitizeSearchTerm(req.query.q);
     const filters = {
       uf: sanitizeSearchTerm(req.query.uf), city: sanitizeSearchTerm(req.query.city), status: sanitizeSearchTerm(req.query.status),
@@ -35,7 +35,7 @@ async function startServer() {
   });
 
   app.get('/api/search/suggestions', async (req, res) => {
-    if (!allowRequest(`suggestions:${req.ip}`, 100)) return res.status(429).json({ error: 'Muitas solicitações.' });
+    if (!allowRequest(`suggestions:${req.ip}`, 30)) return res.status(429).json({ error: 'Muitas solicitações.' });
     const q = sanitizeSearchTerm(req.query.q);
     if (q.length < 3) return res.json({ data: [] });
     try { const result = await searchCompanyDirectory(q, {}, 1); return res.json({ data: result.data.slice(0, 8), source: result.source }); }

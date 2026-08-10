@@ -8,6 +8,45 @@ import VisualizadorEmpresaTabs from './components/VisualizadorEmpresaTabs';
 import HistoricoFavoritos from './components/HistoricoFavoritos';
 import PlatformMockup from './components/PlatformMockup';
 import ErrorBoundary from './components/ErrorBoundary';
+import {
+  Bookmark,
+  Braces,
+  Building2,
+  Copy,
+  History,
+  Search,
+  ShieldCheck,
+} from 'lucide-react';
+
+const DIFFERENTIALS = [
+  {
+    title: 'Busca inteligente',
+    description: 'Pesquise por CNPJ, razão social ou nome fantasia e encontre empresas com rapidez.',
+    icon: Search,
+  },
+  {
+    title: 'Dados organizados',
+    description: 'Situação cadastral, atividades, endereço, capital social e outras informações importantes apresentadas sem ruído.',
+    icon: Building2,
+  },
+  {
+    title: 'Privacidade por padrão',
+    description: 'Seu histórico e favoritos ficam no navegador, enquanto as consultas são processadas apenas para fornecer os resultados.',
+    icon: ShieldCheck,
+  },
+  {
+    title: 'JSON nativo',
+    description: 'Acesse também os dados brutos da consulta quando precisar de informações técnicas ou integrações.',
+    icon: Braces,
+  },
+] as const;
+
+const SECONDARY_FEATURES = [
+  { label: 'Favoritos', icon: Bookmark },
+  { label: 'Histórico', icon: History },
+  { label: 'Copiar dados', icon: Copy },
+  { label: 'JSON', icon: Braces },
+] as const;
 
 export default function App() {
   const {
@@ -167,85 +206,40 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Benefícios principais (Bento Grid) */}
+              {/* Diferenciais principais */}
               <div className="text-center space-y-6" id="recursos">
                 <div className="space-y-2">
                   <span className="text-zinc-500 font-mono text-[10px] uppercase tracking-widest select-none">Diferenciais</span>
-                  <h2 className="text-2xl md:text-4xl font-bold font-display text-white tracking-tight">Por que o CNPJ Premium?</h2>
+                  <h2 className="text-2xl md:text-4xl font-bold font-display text-white tracking-tight">Por que usar o CNPJ Premium?</h2>
                   <p className="text-xs md:text-sm text-zinc-400 max-w-lg mx-auto">
-                    Unimos tecnologia de ponta e design focado no usuário para criar a melhor ferramenta de análise e consulta corporativa do mercado.
+                    Dados empresariais organizados para consultar, encontrar e entender empresas com mais clareza.
                   </p>
                 </div>
 
-                {/* Asymmetric Bento Grid layout */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left pt-8">
-                  
-                  {/* Benefit 1 (Col-span-2 for prominence) */}
-                  <div className="md:col-span-2 p-8 bg-zinc-900/15 hover:bg-zinc-900/25 border border-zinc-900/90 hover:border-zinc-800/80 rounded-2xl space-y-4 transition duration-300 flex flex-col justify-between">
-                    <div className="text-2xl">⚡</div>
-                    <div className="space-y-2">
-                      <h4 className="font-semibold text-base text-zinc-100">Consulta em frações de segundo</h4>
-                      <p className="text-xs text-zinc-400 leading-relaxed max-w-md">
-                        Nossa infraestrutura serverless consulta diretamente as bases públicas federais com algoritmos inteligentes de cache para garantir que suas consultas retornem instantaneamente.
-                      </p>
-                    </div>
-                  </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 text-left pt-6">
+                  {DIFFERENTIALS.map(({ title, description, icon: Icon }) => (
+                    <article
+                      key={title}
+                      className="group min-h-48 p-6 md:p-7 bg-zinc-900/20 hover:bg-zinc-900/35 border border-zinc-900 hover:border-zinc-800 rounded-2xl transition-[background-color,border-color,transform] duration-200 ease-out md:hover:-translate-y-0.5 motion-reduce:transform-none motion-reduce:transition-none"
+                    >
+                      <div className="h-10 w-10 rounded-xl border border-zinc-800/80 bg-zinc-900/70 flex items-center justify-center text-zinc-300 transition-transform duration-200 ease-out md:group-hover:-translate-y-0.5 motion-reduce:transform-none motion-reduce:transition-none">
+                        <Icon aria-hidden="true" size={19} strokeWidth={1.7} />
+                      </div>
+                      <div className="space-y-2 mt-6">
+                        <h3 className="font-semibold text-base text-zinc-100">{title}</h3>
+                        <p className="text-xs md:text-sm text-zinc-400 leading-relaxed max-w-xl">{description}</p>
+                      </div>
+                    </article>
+                  ))}
+                </div>
 
-                  {/* Benefit 2 (Col-span-1) */}
-                  <div className="p-8 bg-zinc-900/15 hover:bg-zinc-900/25 border border-zinc-900/90 hover:border-zinc-800/80 rounded-2xl space-y-4 transition duration-300 flex flex-col justify-between">
-                    <div className="text-2xl">🔒</div>
-                    <div className="space-y-2">
-                      <h4 className="font-semibold text-base text-zinc-100">Privacidade Absoluta</h4>
-                      <p className="text-xs text-zinc-400 leading-relaxed">
-                        Sua atividade e os termos consultados pertencem apenas a você. Sem rastreamento de terceiros ou compartilhamento de informações.
-                      </p>
+                <div className="flex flex-wrap justify-center gap-x-6 gap-y-3 pt-2 text-zinc-500" aria-label="Recursos adicionais">
+                  {SECONDARY_FEATURES.map(({ label, icon: Icon }) => (
+                    <div key={label} className="inline-flex items-center gap-2 text-xs font-medium">
+                      <Icon aria-hidden="true" size={14} strokeWidth={1.7} />
+                      <span>{label}</span>
                     </div>
-                  </div>
-
-                  {/* Benefit 3 (Col-span-1) */}
-                  <div className="p-8 bg-zinc-900/15 hover:bg-zinc-900/25 border border-zinc-900/90 hover:border-zinc-800/80 rounded-2xl space-y-4 transition duration-300 flex flex-col justify-between">
-                    <div className="text-2xl">📊</div>
-                    <div className="space-y-2">
-                      <h4 className="font-semibold text-base text-zinc-100">Resumo Estruturado</h4>
-                      <p className="text-xs text-zinc-400 leading-relaxed">
-                        Transformamos o retorno técnico da Receita Federal em indicadores visuais limpos, de fácil leitura e hierarquia profissional.
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Benefit 4 (Col-span-2 for prominence) */}
-                  <div className="md:col-span-2 p-8 bg-zinc-900/15 hover:bg-zinc-900/25 border border-zinc-900/90 hover:border-zinc-800/80 rounded-2xl space-y-4 transition duration-300 flex flex-col justify-between">
-                    <div className="text-2xl">🏢</div>
-                    <div className="space-y-2">
-                      <h4 className="font-semibold text-base text-zinc-100">Dados cadastrais organizados</h4>
-                      <p className="text-xs text-zinc-400 leading-relaxed max-w-md">
-                         visualize informações importantes de estabelecimentos, matrizes, filiais, capital social, inscrições estaduais e quadro societário completo em guias dedicadas sem poluição visual.
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Benefit 5 (Col-span-2 for prominence) */}
-                  <div className="md:col-span-2 p-8 bg-zinc-900/15 hover:bg-zinc-900/25 border border-zinc-900/90 hover:border-zinc-800/80 rounded-2xl space-y-4 transition duration-300 flex flex-col justify-between">
-                    <div className="text-2xl">⭐</div>
-                    <div className="space-y-2">
-                      <h4 className="font-semibold text-base text-zinc-100">Lista de favoritos inteligentes</h4>
-                      <p className="text-xs text-zinc-400 leading-relaxed max-w-md">
-                        Favorite os CNPJs recorrentes em seu navegador. Acesse-os a qualquer momento na tela inicial em formato de lista minimalista de acesso rápido offline.
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Benefit 6 (Col-span-1) */}
-                  <div className="p-8 bg-zinc-900/15 hover:bg-zinc-900/25 border border-zinc-900/90 hover:border-zinc-800/80 rounded-2xl space-y-4 transition duration-300 flex flex-col justify-between">
-                    <div className="text-2xl">🧩</div>
-                    <div className="space-y-2">
-                      <h4 className="font-semibold text-base text-zinc-100">Explorer JSON Nativo</h4>
-                      <p className="text-xs text-zinc-400 leading-relaxed">
-                        Um visualizador em árvore recursivo e colapsável para desenvolvedores e analistas que necessitam dos dados originais brutos.
-                      </p>
-                    </div>
-                  </div>
-
+                  ))}
                 </div>
               </div>
 

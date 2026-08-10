@@ -20,11 +20,16 @@ function normalize(value: string | undefined) {
   return (value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 }
 
+function normalizeCompact(value: string | undefined) {
+  return normalize(value).replace(/[^a-z0-9]/g, '');
+}
+
 function applyFallbackFilters(items: CompanySummary[], query: string, filters: CompanyFilters) {
   const term = normalize(query);
+  const compactTerm = normalizeCompact(query);
   return items.filter((item) => {
     const haystack = normalize(`${item.razaoSocial} ${item.nomeFantasia || ''} ${item.cnpj} ${item.cnaePrincipal || ''}`);
-    if (term && !haystack.includes(term)) return false;
+    if (term && !haystack.includes(term) && !normalizeCompact(haystack).includes(compactTerm)) return false;
     if (filters.uf && item.uf !== filters.uf.toUpperCase()) return false;
     if (filters.city && !normalize(item.city).includes(normalize(filters.city))) return false;
     if (filters.status && item.status !== filters.status.toUpperCase()) return false;
@@ -40,6 +45,33 @@ function applyFallbackFilters(items: CompanySummary[], query: string, filters: C
   });
 }
 
+function mapProviderCompany(item: unknown, query: string): CompanySummary | null {
+  if (typeof item === 'string') {
+    return /^\d{14}$/.test(item) ? { cnpj: item, razaoSocial: query || 'Empresa encontrada', status: 'OUTRA' } : null;
+  }
+  if (!item || typeof item !== 'object') return null;
+  const company = item as any;
+  const cnpj = String(company.cnpj || company.estabelecimento?.cnpj || '');
+  if (!/^\d{14}$/.test(cnpj)) return null;
+  return {
+    cnpj,
+    razaoSocial: company.razao_social || query || 'Empresa encontrada',
+    nomeFantasia: company.nome_fantasia || company.estabelecimento?.nome_fantasia,
+    status: String(company.situacao_cadastral || company.estabelecimento?.situacao_cadastral || 'OUTRA').toUpperCase() as CompanySummary['status'],
+    city: company.municipio || company.estabelecimento?.cidade?.nome,
+    uf: company.uf || company.estabelecimento?.estado?.sigla,
+  };
+}
+
+async function requestCommercialDirectory(params: URLSearchParams, token: string) {
+  const response = await withProviderGuard(() => fetch(`https://comercial.cnpj.ws/v2/pesquisa?${params}`, {
+    headers: { Accept: 'application/json', x_api_token: token },
+    signal: AbortSignal.timeout(12_000),
+  }));
+  if (!response.ok) throw new Error('SEARCH_PROVIDER_UNAVAILABLE');
+  return response.json();
+}
+
 export async function searchCompanyDirectory(query: string, filters: CompanyFilters, page = 1): Promise<CompanySearchResponse> {
   const token = process.env.CNPJ_WS_API_TOKEN;
   const safePage = Math.max(1, Math.min(Number.isFinite(page) ? page : 1, 100));
@@ -51,21 +83,26 @@ export async function searchCompanyDirectory(query: string, filters: CompanyFilt
     if (filters.cnae) params.set('atividade_principal_id', filters.cnae);
     if (filters.openedFrom) params.set('data_inicio_atividade_de', filters.openedFrom);
     if (filters.openedTo) params.set('data_inicio_atividade_ate', filters.openedTo);
-    const response = await withProviderGuard(() => fetch(`https://comercial.cnpj.ws/v2/pesquisa?${params}`, { headers: { Accept: 'application/json', 'x_api_token': token }, signal: AbortSignal.timeout(12000) }));
-    if (!response.ok) throw new Error('SEARCH_PROVIDER_UNAVAILABLE');
-    const raw = await response.json();
-    const data: CompanySummary[] = Array.isArray(raw.data) ? raw.data.map((item: any) => ({
-      cnpj: String(item.cnpj || item.estabelecimento?.cnpj || ''),
-      razaoSocial: item.razao_social || 'Razão social não informada',
-      nomeFantasia: item.nome_fantasia || item.estabelecimento?.nome_fantasia,
-      status: String(item.situacao_cadastral || item.estabelecimento?.situacao_cadastral || 'OUTRA').toUpperCase(),
-      city: item.municipio || item.estabelecimento?.cidade?.nome,
-      uf: item.uf || item.estabelecimento?.estado?.sigla,
-    })) : [];
-    return { data: data.slice(0, SEARCH_MAX_RESULTS), page: safePage, pageSize: SEARCH_MAX_RESULTS, hasMore: Boolean(raw.tem_proxima_pagina), source: 'commercial' };
+    let raw = await requestCommercialDirectory(params, token);
+    if (query && (!Array.isArray(raw.data) || raw.data.length === 0)) {
+      params.delete('razao_social');
+      params.set('nome_fantasia', query);
+      raw = await requestCommercialDirectory(params, token);
+    }
+    const data: CompanySummary[] = Array.isArray(raw.data)
+      ? raw.data.map((item: unknown) => mapProviderCompany(item, query)).filter((item: CompanySummary | null): item is CompanySummary => item !== null)
+      : [];
+    return { data: data.slice(0, SEARCH_MAX_RESULTS), page: safePage, pageSize: SEARCH_MAX_RESULTS, hasMore: false, source: 'commercial' };
   }
 
   const filtered = applyFallbackFilters(fallbackCompanies, query, filters);
   const start = (safePage - 1) * SEARCH_MAX_RESULTS;
-  return { data: filtered.slice(start, start + SEARCH_MAX_RESULTS), page: safePage, pageSize: SEARCH_MAX_RESULTS, hasMore: filtered.length > start + SEARCH_MAX_RESULTS, source: 'fallback', notice: 'Busca textual em modo demonstrativo. Configure CNPJ_WS_API_TOKEN no servidor para consultar a base comercial completa.' };
+  return {
+    data: filtered.slice(start, start + SEARCH_MAX_RESULTS),
+    page: safePage,
+    pageSize: SEARCH_MAX_RESULTS,
+    hasMore: filtered.length > start + SEARCH_MAX_RESULTS,
+    source: 'fallback',
+    notice: filtered.length ? undefined : 'Não foi possível realizar a busca por nome neste momento. A consulta por CNPJ continua disponível.',
+  };
 }
