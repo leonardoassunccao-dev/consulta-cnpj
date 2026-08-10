@@ -20,8 +20,8 @@ import {
 
 const DIFFERENTIALS = [
   {
-    title: 'Busca inteligente',
-    description: 'Pesquise por CNPJ, razão social ou nome fantasia e encontre empresas com rapidez.',
+    title: 'Consulta rápida por CNPJ',
+    description: 'Consulte dados cadastrais de empresas brasileiras de forma rápida e organizada.',
     icon: Search,
   },
   {
@@ -137,11 +137,11 @@ export default function App() {
 
           
           <h1 className="text-4xl md:text-6xl font-extrabold font-display tracking-tight text-white leading-tight select-none">
-            Encontre qualquer <span className="bg-gradient-to-b from-white to-zinc-400 bg-clip-text text-transparent">empresa do Brasil</span>.
+            Consulte empresas brasileiras <span className="bg-gradient-to-b from-white to-zinc-400 bg-clip-text text-transparent">pelo CNPJ</span>.
           </h1>
           
           <p className="text-sm md:text-lg text-zinc-400 leading-relaxed max-w-xl mx-auto font-normal">
-            Pesquise por CNPJ, razão social ou nome fantasia em uma experiência rápida e intuitiva.
+            Consulte dados cadastrais de empresas brasileiras pelo CNPJ em uma experiência rápida e intuitiva.
           </p>
         </header>
 

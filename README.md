@@ -4,38 +4,30 @@
 
 # CNPJ Premium
 
-Busca e exploração de empresas brasileiras com consulta direta por CNPJ, pesquisa textual, autocomplete e filtros avançados.
+Consulta e exploração de dados cadastrais de empresas brasileiras pelo CNPJ.
 
 View your app in AI Studio: https://ai.studio/apps/3272b2c2-474d-4bbd-ac6c-4abaa9c1391a
 
-## Run Locally
+## Executar localmente
 
-**Prerequisites:**  Node.js
+**Pré-requisito:** Node.js
 
+1. Instale as dependências: `npm install`
+2. Inicie o projeto: `npm run dev`
 
-1. Install dependencies:
-   `npm install`
-2. Opcionalmente, configure `CNPJ_WS_API_TOKEN` apenas no servidor para habilitar a busca comercial completa. Sem esse token, a busca textual usa um catálogo demonstrativo e a consulta por CNPJ continua usando a API pública.
-3. Run the app:
-   `npm run dev`
+## Arquitetura da consulta
 
-## Arquitetura de busca
+- `src/components/CompanySearch.tsx`: entrada e validação do CNPJ.
+- `src/services/cnpjApi.ts`: cliente da rota interna com timeout e tratamento de erros.
+- `api/cnpj/[cnpj].ts`: consulta server-side à API pública CNPJ.ws.
+- `api/_lib/rateLimit.ts`: proteção básica contra abuso.
 
-- `src/services/companySearch.ts`: contrato independente de provedor usado pela interface.
-- `api/search.ts`: pesquisa textual e filtros, até 20 resultados por página.
-- `api/search/suggestions.ts`: autocomplete com no máximo 8 resultados.
-- `api/cnpj/[cnpj].ts`: consulta legada compatível por CNPJ.
-- `api/_lib/companySearch.ts`: adaptador da API comercial e fallback demonstrativo.
-
-O frontend aplica debounce de 300 ms, cancela requisições obsoletas com `AbortController` e nunca solicita o registro completo para montar sugestões. As rotas validam tamanho, removem caracteres de controle, limitam paginação e aplicam rate limiting básico por instância.
-
-## Próxima etapa de dados
-
-Para receber a base completa da Receita Federal, implemente um novo adaptador do serviço para PostgreSQL, com campos normalizados, paginação por cursor e índices `pg_trgm` para razão social e nome fantasia. Não use buscas `%termo%` sem índice em uma tabela integral. Nenhuma migration ou importação massiva é executada por este projeto.
+A consulta externa ocorre exclusivamente no backend. O frontend aceita CNPJ formatado ou apenas com dígitos e nunca recebe credenciais privadas.
 
 ## Verificação
 
 ```text
+npm run lint
 npm run typecheck
 npm test
 npm run build

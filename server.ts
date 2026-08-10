@@ -1,7 +1,6 @@
 import express from 'express';
 import path from 'path';
 import { createServer as createViteServer } from 'vite';
-import { sanitizeSearchTerm, searchCompanyDirectory } from './api/_lib/companySearch';
 import { allowRequest } from './api/_lib/rateLimit';
 import { withProviderGuard } from './api/_lib/providerGuard';
 
@@ -18,28 +17,6 @@ async function startServer() {
     res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
     res.setHeader('X-Frame-Options', 'DENY');
     next();
-  });
-
-  app.get('/api/search', async (req, res) => {
-    if (!allowRequest(`search:${req.ip}`, 30)) return res.status(429).json({ error: 'Muitas buscas em sequência. Aguarde um instante.' });
-    const q = sanitizeSearchTerm(req.query.q);
-    const filters = {
-      uf: sanitizeSearchTerm(req.query.uf), city: sanitizeSearchTerm(req.query.city), status: sanitizeSearchTerm(req.query.status),
-      porte: sanitizeSearchTerm(req.query.porte), branchType: sanitizeSearchTerm(req.query.branchType), cnae: sanitizeSearchTerm(req.query.cnae),
-      openedFrom: sanitizeSearchTerm(req.query.openedFrom), openedTo: sanitizeSearchTerm(req.query.openedTo),
-      capitalMin: sanitizeSearchTerm(req.query.capitalMin), capitalMax: sanitizeSearchTerm(req.query.capitalMax),
-    };
-    if (!q && !Object.values(filters).some(Boolean)) return res.status(400).json({ error: 'Informe um termo ou ao menos um filtro.' });
-    try { return res.json(await searchCompanyDirectory(q, filters, Number(req.query.page || 1))); }
-    catch { return res.status(503).json({ error: 'Não foi possível realizar a busca agora. Tente novamente.' }); }
-  });
-
-  app.get('/api/search/suggestions', async (req, res) => {
-    if (!allowRequest(`suggestions:${req.ip}`, 30)) return res.status(429).json({ error: 'Muitas solicitações.' });
-    const q = sanitizeSearchTerm(req.query.q);
-    if (q.length < 3) return res.json({ data: [] });
-    try { const result = await searchCompanyDirectory(q, {}, 1); return res.json({ data: result.data.slice(0, 8), source: result.source }); }
-    catch { return res.json({ data: [] }); }
   });
 
   // 1. CNPJ Serverless-like API Endpoint

@@ -1,11 +1,17 @@
 import { describe, expect, it } from 'vitest';
-import { detectSearchKind, isTraditionalCnpj, isValidCnpjFormat, normalizeCnpj } from './cnpj';
+import { detectSearchKind, formatCnpjInput, isTraditionalCnpj, isValidCnpjFormat, normalizeCnpj } from './cnpj';
 
 describe('CNPJ search input', () => {
   it('normalizes and detects a traditional CNPJ', () => {
     expect(normalizeCnpj('47.960.950/0001-21')).toBe('47960950000121');
     expect(isTraditionalCnpj('47.960.950/0001-21')).toBe(true);
     expect(detectSearchKind('47960950000121')).toBe('cnpj');
+  });
+
+  it('formats traditional CNPJ input progressively', () => {
+    expect(formatCnpjInput('47960950000121')).toBe('47.960.950/0001-21');
+    expect(formatCnpjInput('47.960.950/0001-21')).toBe('47.960.950/0001-21');
+    expect(formatCnpjInput('47960')).toBe('47.960');
   });
 
   it('accepts the future alphanumeric format without breaking traditional values', () => {
