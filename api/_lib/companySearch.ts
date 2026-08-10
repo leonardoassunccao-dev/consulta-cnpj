@@ -1,5 +1,5 @@
-import type { CompanyFilters, CompanySearchResponse, CompanySummary } from '../../src/types/companySearch';
-import { withProviderGuard } from './providerGuard';
+import type { CompanyFilters, CompanySearchResponse, CompanySummary } from '../../src/types/companySearch.js';
+import { withProviderGuard } from './providerGuard.js';
 
 export const SEARCH_MAX_RESULTS = 20;
 export const SUGGESTION_MAX_RESULTS = 8;

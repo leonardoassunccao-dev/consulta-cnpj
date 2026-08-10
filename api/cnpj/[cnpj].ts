@@ -2,8 +2,8 @@
  * Vercel Serverless Function for CNPJ search.
  * Path: /api/cnpj/[cnpj].ts
  */
-import { allowRequest, requestIdentity } from '../_lib/rateLimit';
-import { withProviderGuard } from '../_lib/providerGuard';
+import { allowRequest, requestIdentity } from '../_lib/rateLimit.js';
+import { withProviderGuard } from '../_lib/providerGuard.js';
 
 export default async function handler(req: any, res: any) {
   res.setHeader('X-Content-Type-Options', 'nosniff');

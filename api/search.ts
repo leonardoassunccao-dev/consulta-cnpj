@@ -1,6 +1,6 @@
-import type { ApiRequest, ApiResponse } from './_lib/httpTypes';
-import { sanitizeSearchTerm, searchCompanyDirectory } from './_lib/companySearch';
-import { allowRequest, requestIdentity } from './_lib/rateLimit';
+import type { ApiRequest, ApiResponse } from './_lib/httpTypes.js';
+import { sanitizeSearchTerm, searchCompanyDirectory } from './_lib/companySearch.js';
+import { allowRequest, requestIdentity } from './_lib/rateLimit.js';
 
 export default async function handler(req: ApiRequest, res: ApiResponse) {
   res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=120');
