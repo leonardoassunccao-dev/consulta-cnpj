@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useCNPJ } from './hooks/useCNPJ';
-import InputCNPJ from './components/InputCNPJ';
+import CompanySearch from './components/CompanySearch';
 import FiliaisTelog from './components/FiliaisTelog';
 import LoadingSkeleton from './components/LoadingSkeleton';
 import ErrorState from './components/ErrorState';
@@ -62,7 +62,7 @@ export default function App() {
   }, [data]);
 
   return (
-    <div className="min-h-screen bg-zinc-950 bg-grid-premium text-zinc-100 flex flex-col font-sans selection:bg-zinc-100 selection:text-zinc-950">
+    <div className="min-h-screen overflow-x-hidden bg-zinc-950 bg-grid-premium text-zinc-100 flex flex-col font-sans selection:bg-zinc-100 selection:text-zinc-950">
       
       {/* Sticky Premium Navbar */}
       <nav className="sticky top-0 z-50 w-full border-b border-zinc-900/80 bg-zinc-950/80 backdrop-blur-md">
@@ -98,21 +98,21 @@ export default function App() {
 
           
           <h1 className="text-4xl md:text-6xl font-extrabold font-display tracking-tight text-white leading-tight select-none">
-            Toda decisão começa com uma <span className="bg-gradient-to-b from-white to-zinc-400 bg-clip-text text-transparent">informação confiável</span>.
+            Encontre qualquer <span className="bg-gradient-to-b from-white to-zinc-400 bg-clip-text text-transparent">empresa do Brasil</span>.
           </h1>
           
           <p className="text-sm md:text-lg text-zinc-400 leading-relaxed max-w-xl mx-auto font-normal">
-            Consulte empresas em segundos com uma experiência moderna, rápida e intuitiva.
+            Pesquise por CNPJ, razão social ou nome fantasia em uma experiência rápida e intuitiva.
           </p>
         </header>
 
         {/* Input form section */}
         <section className="relative z-10" id="search-console">
-          <InputCNPJ
-            onSearch={consultarCNPJ}
+          <CompanySearch
+            onCnpjSearch={consultarCNPJ}
             onClear={limpar}
             isLoading={isLoading}
-            hasResult={!!data}
+            hasCompany={!!data}
           />
         </section>
 
