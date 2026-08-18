@@ -56,3 +56,11 @@
 .animate-fade-in {
   animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+/* Keep secondary text readable on the near-black product surface. */
+.text-zinc-500,
+.text-zinc-600,
+.text-zinc-650,
+.text-zinc-700 {
+  color: #a1a1aa;
+}

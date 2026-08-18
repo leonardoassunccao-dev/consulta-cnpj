@@ -110,7 +110,7 @@ export default function App() {
             {/* Logo/Brand */}
             <button 
               onClick={handleHomeClick} 
-              aria-label="Voltar para a página inicial"
+              aria-label="CNPJ Premium — voltar para a página inicial"
               className="flex items-center gap-2 group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-700 rounded-lg p-0.5 transition"
             >
               <span className="text-white font-display font-bold text-lg tracking-tight group-hover:opacity-90 group-active:opacity-75 transition duration-150">
