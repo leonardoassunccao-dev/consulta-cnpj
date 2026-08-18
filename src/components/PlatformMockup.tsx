@@ -210,7 +210,7 @@ export default function PlatformMockup() {
             </div>
 
             {/* Tabs simulator (Visão Geral active) */}
-            <div className="flex overflow-x-auto pb-1 border-b border-zinc-900 scrollbar-none gap-1 opacity-70">
+            <div className="flex overflow-x-auto pb-1 border-b border-zinc-900 scrollbar-none gap-1 opacity-100">
               {[
                 { id: 'geral', label: 'Visão Geral', active: true },
                 { id: 'endereco', label: 'Endereço', active: false },
@@ -330,7 +330,7 @@ export default function PlatformMockup() {
               {/* Lower Secondary Elements (Slightly dimmed for focus weight contrast) */}
               <div 
                 className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs transition-all duration-1000 ease-out ${
-                  mounted ? 'opacity-40 hover:opacity-100' : 'opacity-0'
+                  mounted ? 'opacity-100' : 'opacity-0'
                 }`}
                 style={{ transitionDelay: '1400ms' }}
                 title="Passe o mouse para destacar os dados cadastrais completos"
