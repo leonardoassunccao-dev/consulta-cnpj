@@ -271,11 +271,11 @@ export default function App() {
                     <div className="space-y-2 pt-4 border-t border-zinc-900/60">
                       <div className="inline-flex items-center gap-1.5 text-xs text-zinc-400 font-semibold font-mono">
                         <span className="w-1.5 h-1.5 rounded-full bg-zinc-400"></span>
-                        Segurança Militar
+                        Conexão protegida
                       </div>
                       <h3 className="text-lg font-bold text-white">Criptografia em trânsito</h3>
                       <p className="text-xs text-zinc-400 leading-relaxed">
-                        Garantia de integridade ponta a ponta. Suas conexões e buscas trafegam de forma oculta pelo proxy seguro sem expor dados do cliente.
+                        As consultas usam HTTPS e passam pelo endpoint do aplicativo, sem colocar credenciais de serviços externos no navegador.
                       </p>
                     </div>
 
@@ -335,12 +335,12 @@ export default function App() {
                             ⚡
                           </div>
                           <div>
-                            <p className="text-xs font-bold text-white">Velocidade média de resposta</p>
-                            <p className="text-[9px] font-mono text-zinc-500">Latência de ponta a ponta</p>
+                            <p className="text-xs font-bold text-white">Consulta em tempo real</p>
+                            <p className="text-[9px] font-mono text-zinc-500">Tempo sujeito ao provedor público</p>
                           </div>
                         </div>
                         <span className="px-2 py-0.5 rounded bg-blue-950/30 border border-blue-900/40 text-[9px] font-bold text-blue-400 font-mono">
-                          0.18s
+                          SOB DEMANDA
                         </span>
                       </div>
                     </div>
@@ -424,11 +424,11 @@ export default function App() {
 
           {/* Middle Links Section */}
           <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-zinc-500 font-medium">
-            <a href="#politica" className="hover:text-zinc-200 transition-colors duration-200">
+            <a href="/privacidade.html" className="hover:text-zinc-200 transition-colors duration-200">
               Política de Privacidade
             </a>
             <span className="text-zinc-800">•</span>
-            <a href="#termos" className="hover:text-zinc-200 transition-colors duration-200">
+            <a href="/termos.html" className="hover:text-zinc-200 transition-colors duration-200">
               Termos de Uso
             </a>
             <span className="text-zinc-800">•</span>
