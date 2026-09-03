@@ -10,6 +10,7 @@ import {
 import InscricoesEstaduais from './InscricoesEstaduais';
 import JsonExplorer from './JsonExplorer';
 import Metricas from './Metricas';
+import { formatFullAddress, normalizeStreetType } from '../utils/address';
 
 interface VisualizadorEmpresaTabsProps {
   data: any;
@@ -106,14 +107,33 @@ export default function VisualizadorEmpresaTabs({ data, onFavoriteToggle }: Visu
 
   // Address
   const cepStr = formatCEP(estab.cep);
-  const logradouro = estab.logradouro || '';
-  const tipoLogradouro = estab.tipo_logradouro ? `${estab.tipo_logradouro} ` : '';
-  const numero = estab.numero ? `, Nº ${estab.numero}` : '';
-  const complemento = estab.complemento ? ` - ${estab.complemento}` : '';
-  const bairro = estab.bairro ? ` - Bairro ${estab.bairro}` : '';
+  const streetType = normalizeStreetType(estab.tipo_logradouro);
+  const tipoLogradouro = streetType ? `${streetType.code} · ${streetType.name}` : 'Não informado';
   const cidadeNome = cidade.nome || 'Não informado';
   const estadoSigla = estado.sigla || '';
-  const enderecoCompleto = `${tipoLogradouro}${logradouro}${numero}${complemento}${bairro}, ${cidadeNome} - ${estadoSigla}, CEP ${cepStr}`;
+  const enderecoCompleto = formatFullAddress({
+    streetType: estab.tipo_logradouro,
+    street: estab.logradouro,
+    number: estab.numero,
+    complement: estab.complemento,
+    district: estab.bairro,
+    city: cidade.nome,
+    state: estado.sigla || estab.uf,
+    postalCode: estab.cep ? cepStr : null,
+  });
+  const inscricoesEstaduais = Array.isArray(estab.inscricoes_estaduais) ? estab.inscricoes_estaduais : [];
+  const inscricaoPrincipal = inscricoesEstaduais.find((item: any) =>
+    String(item?.estado?.sigla || item?.estado || '').toUpperCase() === String(estadoSigla || estab.uf || '').toUpperCase()
+  )?.inscricao_estadual;
+  const inscricaoEstadual = formatFallback(inscricaoPrincipal);
+  const cadastroFields = [
+    ['Razão Social', razaoSocial], ['Nome Fantasia', nomeFantasia], ['CNPJ', cnpjFormated],
+    ['Inscrição Estadual', inscricaoEstadual], ['Tipo de Logradouro', tipoLogradouro],
+    ['Logradouro', formatFallback(estab.logradouro)], ['Número', formatFallback(estab.numero)],
+    ['Complemento', formatFallback(estab.complemento)], ['Bairro', formatFallback(estab.bairro)],
+    ['CEP', cepStr], ['Cidade', cidadeNome], ['UF', formatFallback(estadoSigla || estab.uf)],
+    ['Telefone', telefoneStr], ['E-mail', emailStr],
+  ] as const;
 
   // Age Calculator
   let tempoExistencia = 'Não identificado';
@@ -506,11 +526,11 @@ CNAE Principal: ${atividadePrincipalDesc}
         {/* TAB 2: ENDEREÇO */}
         {activeTab === 'endereco' && (
           <div className="space-y-6 animate-fade-in text-sm text-left">
-            <div className="flex items-center justify-between border-b border-zinc-900 pb-3">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-zinc-900 pb-3">
               <h3 className="text-base font-bold text-white">Localização Física e Logradouro</h3>
               <button
                 onClick={() => copyToClipboard(enderecoCompleto, 'Endereço Completo')}
-                className="px-3.5 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-800 rounded-xl text-xs font-semibold transition flex items-center gap-1.5"
+                className="min-h-11 w-full sm:w-auto px-3.5 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-800 rounded-xl text-xs font-semibold transition flex items-center justify-center gap-1.5"
               >
                 📋 Copiar Endereço Completo
               </button>
@@ -518,8 +538,12 @@ CNAE Principal: ${atividadePrincipalDesc}
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               <div className="p-4.5 bg-zinc-900/25 border border-zinc-900 rounded-xl space-y-1">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-500">Tipo de Logradouro</span>
+                <p className="text-zinc-200 font-medium font-sans break-words">{tipoLogradouro}</p>
+              </div>
+              <div className="p-4.5 bg-zinc-900/25 border border-zinc-900 rounded-xl space-y-1">
                 <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-500">Logradouro</span>
-                <p className="text-zinc-200 font-medium font-sans">{formatFallback(estab.logradouro)}</p>
+                <p className="text-zinc-200 font-medium font-sans break-words">{formatFallback(estab.logradouro)}</p>
               </div>
               <div className="p-4.5 bg-zinc-900/25 border border-zinc-900 rounded-xl space-y-1">
                 <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-500">Número</span>
@@ -549,10 +573,51 @@ CNAE Principal: ${atividadePrincipalDesc}
 
             <div className="p-4 bg-zinc-900/20 border border-zinc-900/80 rounded-xl space-y-2">
               <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-500 block">Visualização Integrada</span>
-              <p className="text-zinc-300 italic">
-                "{enderecoCompleto}"
+              <p className="text-zinc-300 whitespace-pre-line break-words leading-relaxed">
+                {enderecoCompleto}
               </p>
             </div>
+
+            <section className="p-4 sm:p-5 bg-zinc-900/20 border border-zinc-900 rounded-2xl space-y-4" aria-labelledby="dados-cadastro-title">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <h4 id="dados-cadastro-title" className="text-xs uppercase tracking-widest font-mono text-zinc-300 font-bold">Dados para Cadastro</h4>
+                  <p className="mt-1 text-[11px] text-zinc-500">Campos retornados pela fonte pública, prontos para copiar.</p>
+                </div>
+                <button
+                  onClick={() => copyToClipboard(
+                    cadastroFields
+                      .filter(([, value]) => value !== 'Não informado' && value !== 'Sem nome fantasia')
+                      .map(([label, value]) => `${label}: ${value}`)
+                      .join('\n'),
+                    'Dados para Cadastro'
+                  )}
+                  className="min-h-11 w-full sm:w-auto px-3.5 py-2 bg-zinc-100 hover:bg-white text-zinc-950 rounded-xl text-xs font-bold transition active:scale-95"
+                >
+                  Copiar todos
+                </button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-px overflow-hidden rounded-xl border border-zinc-900 bg-zinc-900">
+                {cadastroFields.map(([label, value]) => (
+                  <div key={label} className="min-w-0 bg-zinc-950/90 p-3.5 flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <span className="block text-[9px] font-mono uppercase tracking-wider text-zinc-500">{label}</span>
+                      <span className="mt-1 block text-xs text-zinc-200 break-words">{value}</span>
+                    </div>
+                    {value !== 'Não informado' && value !== 'Sem nome fantasia' && (
+                      <button
+                        onClick={() => copyToClipboard(value, label)}
+                        aria-label={`Copiar ${label}`}
+                        title={`Copiar ${label}`}
+                        className="flex h-11 w-11 flex-none items-center justify-center rounded-lg border border-zinc-800 text-zinc-400 hover:bg-zinc-900 hover:text-white transition"
+                      >
+                        <span aria-hidden="true">⧉</span>
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </section>
           </div>
         )}
 
