@@ -1,7 +1,5 @@
 import React from 'react';
 import CompanySearch from './CompanySearch';
-import CircuitBackground from './CircuitBackground';
-import { Database, Binary, Network, ShieldCheck, CheckCircle2 } from 'lucide-react';
 
 interface HeroSectionProps {
   onCnpjSearch: (cnpj: string) => Promise<boolean>;
@@ -12,111 +10,35 @@ interface HeroSectionProps {
 
 export default function HeroSection(props: HeroSectionProps) {
   return (
-    <section className="relative pt-6 pb-16 md:pt-14 md:pb-24 overflow-hidden" aria-labelledby="hero-title">
-      {/* Circuit Board / Motherboard Traces SVG Background (Inspired by user design) */}
-      <CircuitBackground />
+    <section className="relative pt-16 pb-20 sm:pt-24 sm:pb-28 md:pt-32 md:pb-36 text-center" aria-labelledby="hero-title">
+      {/* Background: Pure AMOLED Black with an almost imperceptible, subtle marsala atmosphere */}
+      <div
+        className="absolute inset-0 pointer-events-none -z-10"
+        style={{
+          background: 'radial-gradient(ellipse 700px 350px at 50% 15%, rgba(139, 30, 63, 0.05), transparent 70%)',
+        }}
+        aria-hidden="true"
+      />
 
-      <div className="w-full max-w-5xl mx-auto text-center space-y-8 sm:space-y-10 relative z-10">
+      <div className="w-full max-w-4xl mx-auto px-4 space-y-8">
         
-        {/* Architectural Metadata Badge */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#07070a]/90 backdrop-blur-md border border-white/[0.08] text-xs font-mono text-zinc-400 shadow-sm animate-fade-in">
-          <span className="w-1.5 h-1.5 rounded-full bg-marsala-accent animate-pulse"></span>
-          <span className="tracking-widest uppercase text-[10px]">BLACK PRECISION</span>
-          <span className="text-zinc-700">//</span>
-          <span className="text-zinc-300 font-medium">INTELIGÊNCIA EMPRESARIAL CNPJ PREMIUM</span>
-          <span className="text-zinc-700">//</span>
-          <span className="text-zinc-500">LEONARDO LABS</span>
-        </div>
-
-        {/* Editorial Headline with Strong Typographic Scale */}
-        <div className="space-y-4 max-w-4xl mx-auto">
+        {/* Title & Short Subtitle */}
+        <div className="space-y-4">
           <h1
             id="hero-title"
-            className="text-4xl sm:text-6xl md:text-7xl font-sans font-black tracking-tight text-white leading-[1.06]"
+            className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-sans font-bold tracking-tight text-white leading-[1.12]"
           >
-            Inteligência empresarial.<br />
-            <span className="text-zinc-400 font-bold">Em cada consulta.</span>
+            Inteligência para decisões<br className="hidden sm:inline" /> entre empresas.
           </h1>
-          <p className="max-w-2xl mx-auto text-base sm:text-lg md:text-xl text-zinc-400 font-normal leading-relaxed">
-            Consulte empresas, organize informações cadastrais e descubra os dados que ajudam você a tomar decisões com mais contexto.
+
+          <p className="text-base sm:text-lg md:text-xl text-zinc-400 font-normal">
+            Informação empresarial. Sem complicação.
           </p>
         </div>
 
-        {/* Central Search Interaction Instrument */}
-        <div className="pt-2">
+        {/* Central Search Element */}
+        <div className="pt-2 sm:pt-4">
           <CompanySearch {...props} />
-        </div>
-
-        {/* Architectural Data Blueprint */}
-        <div className="pt-6 max-w-4xl mx-auto">
-          <div className="relative rounded-2xl border border-white/[0.08] bg-[#050507]/90 backdrop-blur-md p-5 sm:p-7 shadow-2xl text-left crosshair-corner">
-            
-            {/* Blueprint Header */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-white/[0.06] text-xs font-mono text-zinc-500">
-              <div className="flex items-center gap-3">
-                <span className="text-zinc-300 font-bold tracking-wider text-[11px]">
-                  ESQUEMA ESTRUTURAL DE DADOS
-                </span>
-                <span className="text-zinc-700">|</span>
-                <span className="text-zinc-500 text-[10px]">BASE OFICIAL RFB 2026</span>
-              </div>
-              <div className="flex items-center gap-2 text-emerald-400 text-[11px]">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                <span>FLUXO DIRETO SEM CAPTCHAS</span>
-              </div>
-            </div>
-
-            {/* 4 Connected Architectural Modules */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5 pt-5 font-mono">
-              
-              <div className="p-3.5 rounded-xl bg-[#08080b] border border-white/[0.06] hover:border-marsala-500/40 transition">
-                <div className="flex items-center justify-between text-zinc-500 mb-2">
-                  <Database className="w-3.5 h-3.5 text-zinc-300" />
-                  <span className="text-[9px] uppercase tracking-widest text-zinc-600">01 / FONTE</span>
-                </div>
-                <div className="text-xs font-bold text-zinc-100">Receita Federal</div>
-                <div className="text-[10px] text-zinc-500 mt-1">Registros públicos abertos de CNPJ</div>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-[#08080b] border border-white/[0.06] hover:border-marsala-500/40 transition">
-                <div className="flex items-center justify-between text-zinc-500 mb-2">
-                  <Binary className="w-3.5 h-3.5 text-marsala-300" />
-                  <span className="text-[9px] uppercase tracking-widest text-zinc-600">02 / CHECKSUM</span>
-                </div>
-                <div className="text-xs font-bold text-zinc-100">Módulo 11 Client</div>
-                <div className="text-[10px] text-zinc-500 mt-1">Validação dos 14 dígitos no navegador</div>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-[#08080b] border border-white/[0.06] hover:border-marsala-500/40 transition">
-                <div className="flex items-center justify-between text-zinc-500 mb-2">
-                  <Network className="w-3.5 h-3.5 text-zinc-300" />
-                  <span className="text-[9px] uppercase tracking-widest text-zinc-600">03 / CONTEXTO</span>
-                </div>
-                <div className="text-xs font-bold text-zinc-100">Camadas por Assunto</div>
-                <div className="text-[10px] text-zinc-500 mt-1">QSA, CNAEs, Inscrições e Endereço</div>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-[#08080b] border border-white/[0.06] hover:border-marsala-500/40 transition">
-                <div className="flex items-center justify-between text-zinc-500 mb-2">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                  <span className="text-[9px] uppercase tracking-widest text-zinc-600">04 / PRIVACIDADE</span>
-                </div>
-                <div className="text-xs font-bold text-zinc-100">Armazenamento Local</div>
-                <div className="text-[10px] text-zinc-500 mt-1">Histórico gravado apenas no seu dispositivo</div>
-              </div>
-
-            </div>
-
-            {/* Architectural Footer Note */}
-            <div className="mt-4 pt-3.5 border-t border-white/[0.04] flex flex-wrap items-center justify-between gap-2 text-[10px] font-mono text-zinc-500">
-              <span className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-marsala-accent"></span>
-                <span>PADRÃO EDITORIAL LEONARDO LABS</span>
-              </span>
-              <span>DADOS PRESERVADOS EM ESTRUTURA ORIGINAL</span>
-            </div>
-
-          </div>
         </div>
 
       </div>
