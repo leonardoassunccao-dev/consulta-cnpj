@@ -5,6 +5,18 @@
 import { allowRequest, requestIdentity } from '../_lib/rateLimit.js';
 import { withProviderGuard } from '../_lib/providerGuard.js';
 
+function validCnpj(value: string): boolean {
+  if (!/^\d{14}$/.test(value) || /^(\d)\1{13}$/.test(value)) return false;
+  const digit = (base: string, weights: number[]) => {
+    const sum = base.split('').reduce((total, item, index) => total + Number(item) * weights[index], 0);
+    const remainder = sum % 11;
+    return remainder < 2 ? 0 : 11 - remainder;
+  };
+  const first = digit(value.slice(0, 12), [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]);
+  const second = digit(value.slice(0, 12) + first, [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]);
+  return value.endsWith(`${first}${second}`);
+}
+
 export default async function handler(req: any, res: any) {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('Cache-Control', 'public, s-maxage=1800, stale-while-revalidate=3600');
@@ -31,9 +43,9 @@ export default async function handler(req: any, res: any) {
   // Clean the CNPJ parameter
   const cnpjLimpo = cnpj.replace(/\D/g, '');
 
-  if (cnpjLimpo.length !== 14) {
+  if (!validCnpj(cnpjLimpo)) {
     return res.status(400).json({
-      error: `Formato de CNPJ inválido. Foram enviados ${cnpjLimpo.length} dígitos, mas o CNPJ deve conter exatamente 14 números.`,
+      error: 'Digite um CNPJ válido.',
     });
   }
 

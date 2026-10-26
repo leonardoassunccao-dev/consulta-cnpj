@@ -6,3 +6,8 @@ coverage/
 *.log
 .env*
 !.env.example
+.vercel
+.codex-finalizer/
+.pptx-build/
+deliverables/
+materiais-clientes/

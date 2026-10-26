@@ -1,0 +1,8 @@
+.codex-finalizer/
+.pptx-build/
+coverage/
+deliverables/
+materiais-clientes/
+scripts/
+.env*
+*.log

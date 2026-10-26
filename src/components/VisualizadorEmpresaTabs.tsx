@@ -11,6 +11,7 @@ import InscricoesEstaduais from './InscricoesEstaduais';
 import JsonExplorer from './JsonExplorer';
 import Metricas from './Metricas';
 import { formatFullAddress, normalizeStreetType } from '../utils/address';
+import { attentionPoints, companySummary, companyView } from '../utils/companyAnalysis';
 
 interface VisualizadorEmpresaTabsProps {
   data: any;
@@ -151,85 +152,8 @@ export default function VisualizadorEmpresaTabs({ data, onFavoriteToggle }: Visu
     }
   }
 
-  // Calculate Cadastral Score (0 to 100)
-  let scoreValue = 0;
-  const scoreReasons: { text: string; success: boolean }[] = [];
-
-  // Rules:
-  // - CNPJ ativo: +30
-  if (situacaoCadastral === 'ATIVA') {
-    scoreValue += 30;
-    scoreReasons.push({ text: 'CNPJ Ativo (+30 pts)', success: true });
-  } else {
-    scoreReasons.push({ text: `CNPJ em situação: ${situacaoCadastral}`, success: false });
-  }
-
-  // - Mais de 5 anos: +20
-  if (ageYears >= 5) {
-    scoreValue += 20;
-    scoreReasons.push({ text: `Empresa aberta há mais de 5 anos (${tempoExistencia}) (+20 pts)`, success: true });
-  } else if (ageYears > 0) {
-    scoreReasons.push({ text: `Empresa recente (${tempoExistencia})`, success: false });
-  } else {
-    scoreReasons.push({ text: 'Data de abertura não qualificada', success: false });
-  }
-
-  // - Telefone ou E-mail: +15
-  const hasContact = !!(estab.telefone1 || estab.email);
-  if (hasContact) {
-    scoreValue += 15;
-    scoreReasons.push({ text: 'Possui dados de contato (Telefone ou E-mail) (+15 pts)', success: true });
-  } else {
-    scoreReasons.push({ text: 'Sem telefone ou e-mail cadastrado', success: false });
-  }
-
-  // - Endereço completo: +15
-  const hasFullAddress = !!(estab.logradouro && estab.numero && estab.bairro && estab.cep);
-  if (hasFullAddress) {
-    scoreValue += 15;
-    scoreReasons.push({ text: 'Endereço cadastral completo (+15 pts)', success: true });
-  } else {
-    scoreReasons.push({ text: 'Endereço incompleto na base pública', success: false });
-  }
-
-  // - CNAE principal: +10
-  if (atividadePrincipal.id) {
-    scoreValue += 10;
-    scoreReasons.push({ text: 'Possui classificação CNAE principal (+10 pts)', success: true });
-  } else {
-    scoreReasons.push({ text: 'Sem classificação CNAE principal', success: false });
-  }
-
-  // - Capital social: +10
-  const hasCapital = !!(data.capital_social && parseFloat(data.capital_social) > 0);
-  if (hasCapital) {
-    scoreValue += 10;
-    scoreReasons.push({ text: 'Possui Capital Social declarado (+10 pts)', success: true });
-  } else {
-    scoreReasons.push({ text: 'Capital Social zerado ou não informado', success: false });
-  }
-
-  // Interpretive summary text
-  const interpretSummary = () => {
-    let base = `Empresa ativa desde ${estab.data_inicio_atividade ? dataAbertura.slice(6) : 'sua data de fundação'}, `;
-    if (cidadeNome && estadoSigla) {
-      base += `localizada em ${cidadeNome}/${estadoSigla}, `;
-    }
-    if (atividadePrincipal.descricao) {
-      base += `com atuação principal no segmento de ${atividadePrincipal.descricao.toLowerCase()}. `;
-    } else {
-      base += 'com atividades de registro econômico não declaradas de forma direta. ';
-    }
-
-    if (situacaoCadastral === 'ATIVA' && hasFullAddress && hasContact) {
-      base += `O cadastro possui informações cadastrais essenciais preenchidas (como endereço completo e meios de contato) e demonstra alta consistência para uma análise cadastral preliminar.`;
-    } else if (situacaoCadastral === 'ATIVA') {
-      base += `Embora a empresa esteja ativa e registrada, nota-se a falta de algumas informações acessórias (contatos atualizados ou campos adicionais de endereço). Recomenda-se verificação complementar básica.`;
-    } else {
-      base += `A empresa encontra-se sob situação cadastral de "${situacaoCadastral}". Atenção em transações operacionais é recomendada, devendo-se examinar justificativas cadastrais adicionais.`;
-    }
-    return base;
-  };
+  const view = companyView(data);
+  const objectiveAttentionPoints = attentionPoints(view);
 
   // Status badges colors
   const getStatusColor = (status: string) => {
@@ -286,7 +210,7 @@ CNAE Principal: ${atividadePrincipalDesc}
     <div className="space-y-6 text-left">
       
       {/* Upper header block: Enterprise Title + Favorite action */}
-      <div className="bg-zinc-950/40 border border-zinc-900 rounded-2xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xl">
+      <div className="bg-[#08080b] border border-white/[0.08] rounded-2xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xl">
         <div className="space-y-1">
           <span className="text-zinc-500 font-mono text-[10px] uppercase tracking-widest">RESULTADO DA CONSULTA</span>
           <div className="flex flex-wrap items-center gap-3">
@@ -358,88 +282,45 @@ CNAE Principal: ${atividadePrincipalDesc}
       </div>
 
       {/* Tab content wrapper */}
-      <div className="bg-zinc-950/60 backdrop-blur-md border border-zinc-900 rounded-2xl p-6 md:p-8 space-y-6 shadow-2xl relative overflow-hidden min-h-[350px]">
+      <div className="bg-[#070709] border border-white/[0.08] rounded-2xl p-6 md:p-8 space-y-6 shadow-2xl relative overflow-hidden min-h-[350px]">
         
         {/* TAB 1: VISÃO GERAL */}
         {activeTab === 'geral' && (
           <div className="space-y-6 animate-fade-in">
-            {/* Bento Grid: Score and Interpretive Summary */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-              
-              {/* Score Cadastral Panel (left) */}
-              <div className="lg:col-span-5 p-5 bg-zinc-900/30 border border-zinc-900 rounded-2xl space-y-4 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-sm font-semibold text-zinc-200 flex items-center gap-2">
-                    <svg className="w-4 h-4 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-                    </svg>
-                    Score Cadastral Simples
-                  </h3>
-                  <p className="text-[11px] text-zinc-500 mt-0.5 leading-relaxed">
-                    Métrica algorítmica de preenchimento e integridade do registro. Não representa score de crédito.
-                  </p>
-                </div>
-
-                {/* Score visualization circle & bar */}
-                <div className="flex items-center gap-5 my-2">
-                  <div className="relative flex items-center justify-center w-20 h-20 rounded-full border-4 border-zinc-900 bg-black/40">
-                    <span className="text-xl font-extrabold text-white font-mono">{scoreValue}</span>
-                    <span className="text-[9px] text-zinc-500 absolute bottom-3">/ 100</span>
-                  </div>
-                  <div className="flex-1 space-y-1">
-                    <span className="text-xs font-bold text-zinc-300">Classificação</span>
-                    <div className="h-2.5 w-full bg-zinc-900 rounded-full overflow-hidden border border-zinc-850">
-                      <div 
-                        className={`h-full rounded-full transition-all duration-1000 ${
-                          scoreValue >= 80 ? 'bg-emerald-500' : scoreValue >= 50 ? 'bg-amber-500' : 'bg-red-500'
-                        }`} 
-                        style={{ width: `${scoreValue}%` }}
-                      ></div>
-                    </div>
-                    <span className="text-[10px] text-zinc-400 block font-medium">
-                      {scoreValue >= 80 ? 'Excelente Consistência' : scoreValue >= 50 ? 'Consistência Média' : 'Consistência Baixa'}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Checklist reasons */}
-                <div className="space-y-1.5 border-t border-zinc-900/80 pt-3">
-                  {scoreReasons.map((reason, idx) => (
-                    <div key={idx} className="flex items-center gap-1.5 text-xs text-zinc-400">
-                      <span>{reason.success ? '✅' : '⚠️'}</span>
-                      <span className={reason.success ? 'text-zinc-300' : 'text-zinc-500'}>{reason.text}</span>
-                    </div>
-                  ))}
-                </div>
+            <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+              <div className="p-5 bg-zinc-900/30 border border-zinc-900 rounded-2xl space-y-3">
+                <h3 className="text-sm font-semibold text-zinc-200">Indicadores objetivos</h3>
+                <p className="text-sm text-zinc-300">Situação cadastral: <strong>{situacaoCadastral}</strong></p>
+                <p className="text-sm text-zinc-300">Tempo de atividade: <strong>{tempoExistencia}</strong></p>
+                <p className="text-xs leading-5 text-zinc-500">A plataforma não atribui score, risco ou aprovação automática.</p>
               </div>
-
-              {/* Resumo Interpretativo Panel (right) */}
-              <div className="lg:col-span-7 p-5 bg-zinc-900/30 border border-zinc-900 rounded-2xl space-y-4 flex flex-col justify-between">
+              <div className="p-5 bg-zinc-900/30 border border-zinc-900 rounded-2xl space-y-4 flex flex-col justify-between">
                 <div>
                   <h3 className="text-sm font-semibold text-zinc-200 flex items-center gap-2">
                     <svg className="w-4 h-4 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    Resumo Inteligente Interpretativo
+                    Resumo da empresa
                   </h3>
                   <p className="text-[11px] text-zinc-500 mt-0.5 leading-relaxed">
-                    Leitura analítica dinâmica gerada a partir dos dados do cadastro público.
+                    Texto determinístico gerado exclusivamente com dados disponíveis na fonte.
                   </p>
                 </div>
 
                 <div className="p-4 bg-black/30 border border-zinc-900 rounded-xl leading-relaxed">
                   <p className="text-sm text-zinc-300 font-sans italic">
-                    "{interpretSummary()}"
+                    {companySummary(view)}
                   </p>
                 </div>
 
                 {/* Micro claim warning */}
                 <p className="text-[10px] text-zinc-500 leading-relaxed">
-                  *Esta leitura possui caráter puramente informacional e interpretativo com base em dados de domínio público e não constitui qualquer conselho jurídico ou avaliação de risco comercial.
+                  Esta leitura tem caráter informativo e não representa avaliação de risco comercial.
                 </p>
               </div>
 
             </div>
+            {objectiveAttentionPoints.length > 0 && <div className="rounded-xl border border-amber-900/50 bg-amber-950/10 p-4"><h3 className="text-sm font-semibold text-amber-200">Pontos de atenção</h3><ul className="mt-2 space-y-1 text-sm text-zinc-300">{objectiveAttentionPoints.map(point => <li key={point}>• {point}</li>)}</ul></div>}
 
             {/* Quick action buttons for copy-pasting */}
             <div className="p-5 bg-zinc-900/20 border border-zinc-900 rounded-2xl space-y-3.5">

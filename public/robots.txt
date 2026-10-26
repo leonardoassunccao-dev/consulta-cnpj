@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /api/
 
-Sitemap: https://consulta-cnpj-liart.vercel.app/sitemap.xml
+Sitemap: https://www.cnpjpremium.com.br/sitemap.xml

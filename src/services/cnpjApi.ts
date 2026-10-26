@@ -25,11 +25,11 @@ export function validateCnpjFormat(cnpjLimpo: string): boolean {
 export async function fetchCnpj(cnpj: string, timeoutMs: number = 15000): Promise<CnpjApiResponse> {
   const cnpjLimpo = cleanCnpj(cnpj);
 
-  if (!validateCnpjFormat(cnpjLimpo)) {
+  if (!validateCnpjFormat(cnpjLimpo) || !isValidCnpj(cnpjLimpo)) {
     return {
       success: false,
       data: null,
-      error: 'O CNPJ deve conter exatamente 14 números.',
+      error: 'Digite um CNPJ válido.',
       errorType: 'INVALID_CNPJ',
     };
   }
@@ -113,3 +113,4 @@ export async function fetchCnpj(cnpj: string, timeoutMs: number = 15000): Promis
     };
   }
 }
+import { isValidCnpj } from '../utils/cnpj';

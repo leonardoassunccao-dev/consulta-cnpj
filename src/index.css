@@ -1,47 +1,139 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
-@layer components {
-  .filter-field {
-    @apply mt-1 block w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2.5 text-sm text-zinc-200 outline-none transition focus:border-zinc-600;
-  }
-}
-
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Outfit", "Inter", sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+
+  --color-marsala-50: #fcf6f7;
+  --color-marsala-100: #f7ebed;
+  --color-marsala-200: #edd7dc;
+  --color-marsala-300: #dfb8c2;
+  --color-marsala-400: #cc91a1;
+  --color-marsala-500: #b56c81;
+  --color-marsala-600: #9a4c63;
+  --color-marsala-700: #7e384c;
+  --color-marsala-800: #682f40;
+  --color-marsala-900: #4e1d2c;
+  --color-marsala-950: #2e0d17;
+  --color-marsala-accent: #962241;
 }
 
-/* Premium grid background pattern and subtle top glow */
-.bg-grid-premium {
+:root {
+  color-scheme: dark;
+}
+
+html {
+  background-color: #030304;
+  color: #f4f4f5;
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #030304;
+  overflow-x: hidden;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background-color: #7e384c;
+  color: #ffffff;
+}
+
+:where(a, button, input, select, textarea):focus-visible {
+  outline: 2px solid #962241;
+  outline-offset: 2px;
+}
+
+/* Black Precision: Architectural Micro-Grid & Line Textures */
+.precision-grid {
+  background-size: 48px 48px;
   background-image: 
-    radial-gradient(circle at top, rgba(24, 24, 27, 0.5) 0%, rgba(9, 9, 11, 1) 100%),
-    radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.035) 1px, transparent 0);
-  background-size: 100% 100%, 28px 28px;
-  background-attachment: fixed;
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
 }
 
-/* Custom fine scrollbar controls */
-.custom-scrollbar::-webkit-scrollbar {
+.precision-dots {
+  background-size: 24px 24px;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+}
+
+/* Controlled Marsala Illumination */
+.ambient-glow-marsala {
+  position: absolute;
+  pointer-events: none;
+  background: radial-gradient(circle 600px at 50% 0%, rgba(139, 30, 63, 0.12), transparent 75%);
+}
+
+.ambient-hero-marsala {
+  position: absolute;
+  pointer-events: none;
+  background: radial-gradient(ellipse 900px 450px at 50% 0%, rgba(110, 22, 48, 0.16), transparent 70%);
+}
+
+/* Hairline Precision Borders & Corner Markers */
+.precision-border {
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.precision-border-subtle {
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.precision-border-marsala {
+  border: 1px solid rgba(150, 34, 65, 0.35);
+}
+
+/* Architectural Dossier Crosshairs */
+.crosshair-corner {
+  position: relative;
+}
+.crosshair-corner::before,
+.crosshair-corner::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+  z-index: 10;
+}
+.crosshair-corner::before {
+  top: -1px;
+  left: -1px;
   width: 6px;
   height: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+  border-left: 1px solid rgba(255, 255, 255, 0.3);
+}
+.crosshair-corner::after {
+  bottom: -1px;
+  right: -1px;
+  width: 6px;
+  height: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  border-right: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.4);
-  border-radius: 8px;
+/* Custom Refined Scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
+::-webkit-scrollbar-track {
+  background: #030304;
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+::-webkit-scrollbar-thumb {
+  background: #1a1a20;
+  border-radius: 9999px;
 }
 
+::-webkit-scrollbar-thumb:hover {
+  background: #2d2d38;
+}
+
+/* Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -54,13 +146,14 @@
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Keep secondary text readable on the near-black product surface. */
-.text-zinc-500,
-.text-zinc-600,
-.text-zinc-650,
-.text-zinc-700 {
-  color: #a1a1aa;
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
