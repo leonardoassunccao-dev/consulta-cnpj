@@ -1,6 +1,7 @@
 import React from 'react';
 import CompanySearch from './CompanySearch';
-import { Database, Binary, Network, ShieldCheck, CheckCircle2, ArrowRight } from 'lucide-react';
+import CircuitBackground from './CircuitBackground';
+import { Database, Binary, Network, ShieldCheck, CheckCircle2 } from 'lucide-react';
 
 interface HeroSectionProps {
   onCnpjSearch: (cnpj: string) => Promise<boolean>;
@@ -12,14 +13,13 @@ interface HeroSectionProps {
 export default function HeroSection(props: HeroSectionProps) {
   return (
     <section className="relative pt-6 pb-16 md:pt-14 md:pb-24 overflow-hidden" aria-labelledby="hero-title">
-      {/* Black Precision: Ambient Backlight & Blueprint Grid */}
-      <div className="ambient-hero-marsala inset-0 -z-10" aria-hidden="true" />
-      <div className="absolute inset-0 precision-grid -z-20 opacity-40 pointer-events-none" aria-hidden="true" />
+      {/* Circuit Board / Motherboard Traces SVG Background (Inspired by user design) */}
+      <CircuitBackground />
 
-      <div className="w-full max-w-5xl mx-auto text-center space-y-8 sm:space-y-10">
+      <div className="w-full max-w-5xl mx-auto text-center space-y-8 sm:space-y-10 relative z-10">
         
         {/* Architectural Metadata Badge */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#07070a] border border-white/[0.08] text-xs font-mono text-zinc-400 shadow-sm animate-fade-in">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#07070a]/90 backdrop-blur-md border border-white/[0.08] text-xs font-mono text-zinc-400 shadow-sm animate-fade-in">
           <span className="w-1.5 h-1.5 rounded-full bg-marsala-accent animate-pulse"></span>
           <span className="tracking-widest uppercase text-[10px]">BLACK PRECISION</span>
           <span className="text-zinc-700">//</span>
@@ -47,7 +47,7 @@ export default function HeroSection(props: HeroSectionProps) {
           <CompanySearch {...props} />
         </div>
 
-        {/* Architectural Data Blueprint (Live Cadastral Hierarchy Preview) */}
+        {/* Architectural Data Blueprint */}
         <div className="pt-6 max-w-4xl mx-auto">
           <div className="relative rounded-2xl border border-white/[0.08] bg-[#050507]/90 backdrop-blur-md p-5 sm:p-7 shadow-2xl text-left crosshair-corner">
             

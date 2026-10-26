@@ -16,7 +16,8 @@
   --color-marsala-800: #682f40;
   --color-marsala-900: #4e1d2c;
   --color-marsala-950: #2e0d17;
-  --color-marsala-accent: #962241;
+  --color-marsala-accent: #e11d48;
+  --color-marsala-crimson: #be123c;
 }
 
 :root {
@@ -38,16 +39,16 @@ body {
 }
 
 ::selection {
-  background-color: #7e384c;
+  background-color: #be123c;
   color: #ffffff;
 }
 
 :where(a, button, input, select, textarea):focus-visible {
-  outline: 2px solid #962241;
+  outline: 2px solid #e11d48;
   outline-offset: 2px;
 }
 
-/* Black Precision: Architectural Micro-Grid & Line Textures */
+/* Black Precision: Architectural Micro-Grid */
 .precision-grid {
   background-size: 48px 48px;
   background-image: 
@@ -60,33 +61,33 @@ body {
   background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
 }
 
-/* Controlled Marsala Illumination */
-.ambient-glow-marsala {
-  position: absolute;
-  pointer-events: none;
-  background: radial-gradient(circle 600px at 50% 0%, rgba(139, 30, 63, 0.12), transparent 75%);
+/* Glowing Crimson/Marsala Lines (Signature from user design) */
+.glow-marsala-bar {
+  background: linear-gradient(90deg, #be123c 0%, #e11d48 50%, rgba(225, 29, 72, 0.2) 100%);
+  box-shadow: 0 0 14px rgba(225, 29, 72, 0.45);
 }
 
+.glow-marsala-accent {
+  box-shadow: 0 0 20px rgba(190, 18, 60, 0.35);
+}
+
+/* Ambient Backlighting */
 .ambient-hero-marsala {
   position: absolute;
   pointer-events: none;
-  background: radial-gradient(ellipse 900px 450px at 50% 0%, rgba(110, 22, 48, 0.16), transparent 70%);
+  background: radial-gradient(ellipse 900px 450px at 50% 0%, rgba(190, 18, 60, 0.16), transparent 70%);
 }
 
-/* Hairline Precision Borders & Corner Markers */
+/* Hairline Precision Borders */
 .precision-border {
   border: 1px solid rgba(255, 255, 255, 0.07);
 }
 
-.precision-border-subtle {
-  border: 1px solid rgba(255, 255, 255, 0.04);
-}
-
 .precision-border-marsala {
-  border: 1px solid rgba(150, 34, 65, 0.35);
+  border: 1px solid rgba(225, 29, 72, 0.35);
 }
 
-/* Architectural Dossier Crosshairs */
+/* Architectural Dossier Corner Notches */
 .crosshair-corner {
   position: relative;
 }
@@ -114,6 +115,27 @@ body {
   border-right: 1px solid rgba(255, 255, 255, 0.3);
 }
 
+/* 3D Isometric / Perspective Presentation for the Showcase */
+.perspective-container {
+  perspective: 1400px;
+}
+
+.perspective-dashboard {
+  transform: rotateX(10deg) rotateY(-8deg) rotateZ(2deg);
+  transform-style: preserve-3d;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.perspective-dashboard:hover {
+  transform: rotateX(4deg) rotateY(-3deg) rotateZ(1deg);
+}
+
+@media (max-width: 1024px) {
+  .perspective-dashboard {
+    transform: none !important;
+  }
+}
+
 /* Custom Refined Scrollbar */
 ::-webkit-scrollbar {
   width: 5px;
@@ -133,7 +155,7 @@ body {
   background: #2d2d38;
 }
 
-/* Animations */
+/* Keyframes */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -155,5 +177,6 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+    transform: none !important;
   }
 }

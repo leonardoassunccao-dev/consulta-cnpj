@@ -225,6 +225,7 @@ CNAE Principal: ${atividadePrincipalDesc}
           <p className="text-xs text-zinc-400 font-mono">
             {cnpjFormated} {nomeFantasia !== 'Não informado' ? `• ${nomeFantasia}` : ''}
           </p>
+          <div className="pt-2"><div className="h-1 w-56 rounded-full glow-marsala-bar"></div></div>
         </div>
 
         {/* Favorite toggle action */}

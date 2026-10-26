@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
 import {
+  LayoutDashboard,
   Building2,
   Users,
-  MapPin,
-  Briefcase,
+  DollarSign,
+  ShieldCheck,
+  Activity,
   Code2,
-  CheckCircle2,
   ExternalLink,
-  ShieldAlert,
+  Search,
+  Maximize2,
+  RotateCcw,
   Copy,
   Check,
+  ChevronRight,
 } from 'lucide-react';
 
 interface ProductDemoProps {
@@ -17,375 +21,442 @@ interface ProductDemoProps {
   isLoading: boolean;
 }
 
-const SAMPLE_DEMO_DATA = {
+const DEMO_COMPANY = {
   razaoSocial: 'PETRÓLEO BRASILEIRO S.A. - PETROBRAS',
   nomeFantasia: 'PETROBRAS',
   cnpj: '33.000.167/0001-01',
   rawCnpj: '33000167000101',
   situacaoCadastral: 'ATIVA',
   dataAbertura: '18/09/1953',
-  tempoAtividade: '72 anos de atividade ininterrupta',
-  porte: 'Demais (Grande Porte)',
-  naturezaJuridica: '203-8 — Sociedade de Economia Mista',
+  tempoAtividade: '72a 1m 20d',
   capitalSocial: 'R$ 205.431.989.927,00',
-  cnaePrincipal: {
-    codigo: '06.00-0-01',
-    descricao: 'Extração de petróleo e gás natural',
-  },
-  cnaesSecundarios: [
-    { codigo: '19.21-7-00', descricao: 'Fabricação de produtos do refino de petróleo' },
-    { codigo: '46.81-8-01', descricao: 'Comércio atacadista de álcool carburante, biodiesel, gasolina e derivados' },
-    { codigo: '49.50-7-00', descricao: 'Transporte dutoviário' },
-    { codigo: '35.11-5-01', descricao: 'Geração de energia elétrica' },
-  ],
-  endereco: {
-    tipo: 'Avenida',
-    logradouro: 'República do Chile',
-    numero: '65',
-    complemento: 'Edifício Sede',
-    bairro: 'Centro',
-    municipio: 'Rio de Janeiro',
-    uf: 'RJ',
-    cep: '20031-912',
-  },
-  socios: [
-    { nome: 'MAGDA MARIA DE REGINA CHAMBRIARD', qualificacao: 'Diretor-Presidente', faixaEtaria: '61 a 70 anos' },
-    { nome: 'FERNANDO REIS DE SANTANA', qualificacao: 'Diretor Executivo', faixaEtaria: '51 a 60 anos' },
-    { nome: 'MAURICIO TOLMASQUIM', qualificacao: 'Diretor Executivo Transição Energética', faixaEtaria: '61 a 70 anos' },
-    { nome: 'PIETRO ADAMO SAMPAIO MENDES', qualificacao: 'Presidente do Conselho de Administração', faixaEtaria: '41 a 50 anos' },
-  ],
+  porte: 'Grande Porte (Demais)',
+  naturezaJuridica: '203-8 — Sociedade de Economia Mista',
+  municipioUf: 'Rio de Janeiro / RJ',
+  totalVinculos: '+29',
+  totalSocios: '9',
+  cnaePrincipal: '06.00-0-01 — Extração de petróleo e gás natural',
 };
 
 export default function ProductDemo({ onSelect, isLoading }: ProductDemoProps) {
-  const [activeTab, setActiveTab] = useState<'geral' | 'socios' | 'atividades' | 'endereco' | 'json'>('geral');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'socios' | 'cnaes' | 'json'>('dashboard');
+  const [is3DMode, setIs3DMode] = useState(true);
   const [copied, setCopied] = useState(false);
 
-  const handleCopySampleJson = () => {
-    const jsonStr = JSON.stringify(SAMPLE_DEMO_DATA, null, 2);
-    navigator.clipboard.writeText(jsonStr);
+  const handleCopyJson = () => {
+    navigator.clipboard.writeText(JSON.stringify(DEMO_COMPANY, null, 2));
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   return (
-    <section className="py-14 md:py-24" id="demonstracao" aria-labelledby="demo-title">
-      <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 space-y-8">
+    <section className="py-14 md:py-24 relative overflow-hidden" id="demonstracao" aria-labelledby="demo-title">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 space-y-8 text-left">
         
-        {/* Section Heading */}
+        {/* Editorial Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 border-b border-white/[0.08] pb-6">
-          <div className="space-y-2.5">
+          <div className="space-y-2">
             <div className="inline-flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-zinc-400">
-              <span className="w-1.5 h-1.5 rounded-full bg-marsala-accent"></span>
-              <span>A INTERFACE COMO DEMONSTRAÇÃO</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-marsala-accent animate-pulse"></span>
+              <span>BLACK PRECISION // INTERFACE DE DADOS</span>
             </div>
-            <h2 id="demo-title" className="text-2xl sm:text-3xl md:text-4xl font-sans font-black text-white tracking-tight">
-              Apresentação arquitetônica de dados.
+            <h2 id="demo-title" className="text-2xl sm:text-4xl md:text-5xl font-sans font-black text-white tracking-tight">
+              A interface como demonstração.
             </h2>
             <p className="text-sm md:text-base text-zinc-400 max-w-2xl leading-relaxed">
-              Estruturação visual de ponta a ponta: dados cadastrais oficiais ganham clareza executiva para rápida compreensão e auditoria.
+              Cockpit de inteligência cadastral de alto contraste, com acentos marsala, telemetria de governança e visualização arquitetônica em tempo real.
             </p>
           </div>
 
-          <div className="flex items-center gap-2 text-xs font-mono text-zinc-400">
-            <span className="px-3 py-1.5 rounded-md bg-[#08080a] border border-white/[0.08]">
-              Amostra Real: Petrobras (RFB)
-            </span>
+          {/* Perspective 3D Tilt Toggle */}
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setIs3DMode(!is3DMode)}
+              className="px-3.5 py-1.5 rounded-lg bg-[#0a0a0e] border border-white/[0.1] hover:border-marsala-500/50 text-xs font-mono text-zinc-300 hover:text-white transition flex items-center gap-2 cursor-pointer shadow-sm"
+              title="Alternar ângulo de perspectiva 3D"
+            >
+              <Maximize2 className="w-3.5 h-3.5 text-marsala-accent" />
+              <span>{is3DMode ? 'Visualização 3D Ativa' : 'Visualização Plana'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => void onSelect(DEMO_COMPANY.rawCnpj)}
+              disabled={isLoading}
+              className="px-4 py-2 rounded-lg bg-white text-zinc-950 hover:bg-zinc-200 font-sans text-xs font-bold transition flex items-center gap-1.5 cursor-pointer active:scale-95 shadow-md"
+            >
+              <span>Consultar ao Vivo</span>
+              <ExternalLink className="w-3 h-3" />
+            </button>
           </div>
         </div>
 
-        {/* Architectural Dashboard Terminal Frame */}
-        <div className="rounded-2xl border border-white/[0.1] bg-[#050507] shadow-[0_30px_90px_rgba(0,0,0,0.95)] overflow-hidden crosshair-corner">
+        {/* 3D Perspective Container (Inspired by User Screenshot) */}
+        <div className={`transition-all duration-500 ${is3DMode ? 'perspective-container py-4' : ''}`}>
           
-          {/* Top Frame Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-4 px-5 py-3 bg-[#08080b] border-b border-white/[0.08]">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-zinc-800"></span>
-                <span className="w-2.5 h-2.5 rounded-full bg-zinc-800"></span>
-                <span className="w-2.5 h-2.5 rounded-full bg-zinc-800"></span>
-              </div>
-              <div className="hidden sm:flex items-center gap-2 ml-2 px-3 py-1 rounded bg-[#030304] border border-white/[0.06] text-[11px] font-mono text-zinc-400">
-                <span className="text-zinc-600">https://</span>
-                <span className="text-zinc-300">cnpjpremium.com.br/consulta/</span>
-                <span className="text-marsala-300 font-semibold">{SAMPLE_DEMO_DATA.rawCnpj}</span>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 text-[11px] font-mono text-zinc-400">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>BASE OFICIAL RFB SINCRONIZADA</span>
-            </div>
-          </div>
-
-          {/* Company Title Header */}
-          <div className="p-6 sm:p-8 border-b border-white/[0.08] bg-[#07070a]/70">
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-              <div className="space-y-2">
-                <div className="flex flex-wrap items-center gap-3">
-                  <span className="font-mono text-[10px] text-zinc-400 uppercase tracking-widest px-2 py-0.5 rounded bg-zinc-900 border border-white/[0.06]">
-                    MATRIZ
-                  </span>
-                  <span className="font-mono text-xs text-zinc-300">
-                    {SAMPLE_DEMO_DATA.cnpj}
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold font-mono bg-emerald-950/80 text-emerald-400 border border-emerald-800/60">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                    {SAMPLE_DEMO_DATA.situacaoCadastral}
-                  </span>
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-mono text-zinc-400 bg-zinc-900 border border-white/[0.06]">
-                    <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                    Validado Módulo 11
-                  </span>
-                </div>
-
-                <h3 className="text-xl sm:text-2xl md:text-3xl font-sans font-black text-white tracking-tight">
-                  {SAMPLE_DEMO_DATA.razaoSocial}
-                </h3>
-                <p className="text-xs sm:text-sm text-zinc-400 font-mono">
-                  {SAMPLE_DEMO_DATA.naturezaJuridica} • Rio de Janeiro / RJ
-                </p>
-              </div>
-
-              {/* Direct Search Trigger Action */}
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
-                <button
-                  type="button"
-                  onClick={() => void onSelect(SAMPLE_DEMO_DATA.rawCnpj)}
-                  disabled={isLoading}
-                  className="px-5 py-3 rounded-xl font-sans text-xs sm:text-sm font-bold bg-white text-zinc-950 hover:bg-zinc-100 transition shadow-lg active:scale-95 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
-                >
-                  <span>Executar Consulta Real</span>
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Architectural Tabs Navigation */}
-          <div className="flex overflow-x-auto px-6 pt-3 border-b border-white/[0.08] gap-1 bg-[#060608]">
-            {[
-              { id: 'geral', label: 'Visão Geral', icon: Building2 },
-              { id: 'socios', label: 'Quadro Societário (QSA)', icon: Users },
-              { id: 'atividades', label: 'Atividades Econômicas', icon: Briefcase },
-              { id: 'endereco', label: 'Endereço Fiscal', icon: MapPin },
-              { id: 'json', label: 'Payload JSON', icon: Code2 },
-            ].map(({ id, label, icon: Icon }) => (
-              <button
-                key={id}
-                type="button"
-                onClick={() => setActiveTab(id as any)}
-                className={`flex items-center gap-2 px-4 py-3 text-xs font-semibold rounded-t-lg border-b-2 transition whitespace-nowrap cursor-pointer ${
-                  activeTab === id
-                    ? 'border-marsala-accent text-white bg-zinc-950'
-                    : 'border-transparent text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.02]'
-                }`}
-              >
-                <Icon className={`w-3.5 h-3.5 ${activeTab === id ? 'text-marsala-300' : 'text-zinc-500'}`} />
-                <span>{label}</span>
-              </button>
-            ))}
-          </div>
-
-          {/* Tab Content Display Area */}
-          <div className="p-6 sm:p-8 bg-[#040406] min-h-[360px]">
-            {activeTab === 'geral' && (
-              <div className="space-y-6 animate-fade-in text-left">
-                {/* 4 Architectural Metric Cells */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
-                  <div className="p-4 rounded-xl bg-[#07070a] border border-white/[0.06]">
-                    <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-500">Capital Social</span>
-                    <p className="mt-1.5 text-base sm:text-lg font-bold font-mono text-white truncate">
-                      {SAMPLE_DEMO_DATA.capitalSocial}
-                    </p>
-                    <span className="text-[10px] text-zinc-500">Declarado na RFB</span>
+          <div
+            className={`rounded-2xl border border-white/[0.1] bg-[#070709] shadow-[0_35px_110px_rgba(0,0,0,0.98)] overflow-hidden transition-all duration-500 ${
+              is3DMode ? 'perspective-dashboard' : ''
+            }`}
+          >
+            
+            {/* Main Application Layout: Left Icon Rail + Center Console */}
+            <div className="flex flex-col md:flex-row min-h-[580px]">
+              
+              {/* 1. Left Vertical Icon Rail (Matching reference screenshot) */}
+              <aside className="w-full md:w-16 bg-[#040406] border-b md:border-b-0 md:border-r border-white/[0.08] p-3 flex md:flex-col items-center justify-between shrink-0">
+                <div className="flex md:flex-col items-center gap-4">
+                  {/* Glowing Marsala Logo Mark */}
+                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#e11d48] to-[#881337] flex items-center justify-center text-white font-black font-mono text-xs shadow-[0_0_16px_rgba(225,29,72,0.6)] cursor-pointer">
+                    CP
                   </div>
 
-                  <div className="p-4 rounded-xl bg-[#07070a] border border-white/[0.06]">
-                    <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-500">Data de Abertura</span>
-                    <p className="mt-1.5 text-base sm:text-lg font-bold font-mono text-white">
-                      {SAMPLE_DEMO_DATA.dataAbertura}
-                    </p>
-                    <span className="text-[10px] text-emerald-400">{SAMPLE_DEMO_DATA.tempoAtividade}</span>
-                  </div>
-
-                  <div className="p-4 rounded-xl bg-[#07070a] border border-white/[0.06]">
-                    <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-500">Porte Declarado</span>
-                    <p className="mt-1.5 text-base sm:text-lg font-bold text-white truncate">
-                      {SAMPLE_DEMO_DATA.porte}
-                    </p>
-                    <span className="text-[10px] text-zinc-500">Sociedade de Grande Porte</span>
-                  </div>
-
-                  <div className="p-4 rounded-xl bg-[#07070a] border border-white/[0.06]">
-                    <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-500">Sócios & QSA</span>
-                    <p className="mt-1.5 text-base sm:text-lg font-bold text-white">
-                      {SAMPLE_DEMO_DATA.socios.length} integrantes
-                    </p>
-                    <span className="text-[10px] text-zinc-500">Governança mapeada</span>
-                  </div>
-                </div>
-
-                {/* Structured Summary & Primary Economic Classification */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                  <div className="p-5 rounded-xl bg-[#07070a] border border-white/[0.06] space-y-2">
-                    <div className="flex items-center gap-2 text-xs font-mono text-zinc-400 uppercase tracking-wider">
-                      <span className="w-1.5 h-1.5 rounded-full bg-marsala-accent"></span>
-                      <span>Resumo Cadastral Inteligente</span>
-                    </div>
-                    <p className="text-sm text-zinc-300 leading-relaxed">
-                      Sociedade de economia mista ativa há mais de sete décadas no segmento estratégico de extração de petróleo e gás natural. Apresenta governança colegiada estruturada perante a Receita Federal do Brasil, com quadro societário mapeado e regularidade cadastral vigente.
-                    </p>
-                  </div>
-
-                  <div className="p-5 rounded-xl bg-[#07070a] border border-white/[0.06] space-y-2">
-                    <div className="flex items-center gap-2 text-xs font-mono text-zinc-400 uppercase tracking-wider">
-                      <Briefcase className="w-3.5 h-3.5 text-zinc-400" />
-                      <span>Atividade Econômica Principal</span>
-                    </div>
-                    <div className="font-mono text-sm font-semibold text-white">
-                      {SAMPLE_DEMO_DATA.cnaePrincipal.codigo}
-                    </div>
-                    <p className="text-sm text-zinc-300">
-                      {SAMPLE_DEMO_DATA.cnaePrincipal.descricao}
-                    </p>
-                    <p className="text-xs text-zinc-500 pt-1 font-mono">
-                      Total de 4 atividades secundárias registradas no CNPJ.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {activeTab === 'socios' && (
-              <div className="space-y-4 animate-fade-in text-left">
-                <div className="flex items-center justify-between text-xs font-mono text-zinc-400 pb-2 border-b border-white/[0.06]">
-                  <span>RELAÇÃO DE ADMINISTRADORES / QUADRO SOCIETÁRIO (QSA)</span>
-                  <span>{SAMPLE_DEMO_DATA.socios.length} INTEGRANTES CADASTRADOS</span>
-                </div>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  {SAMPLE_DEMO_DATA.socios.map((socio) => (
-                    <div
-                      key={socio.nome}
-                      className="p-4 rounded-xl bg-[#07070a] border border-white/[0.06] space-y-1.5"
+                  {/* Vertical Navigation Icons */}
+                  <nav className="flex md:flex-col items-center gap-1.5 text-zinc-500 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('dashboard')}
+                      className={`p-2 rounded-lg transition cursor-pointer ${
+                        activeTab === 'dashboard'
+                          ? 'bg-zinc-900 text-white border border-white/[0.1]'
+                          : 'hover:text-zinc-200 hover:bg-white/[0.03]'
+                      }`}
+                      title="Dashboard Executivo"
                     >
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-950 text-zinc-300 border border-white/[0.06]">
-                          {socio.qualificacao}
-                        </span>
-                        <span className="text-[10px] font-mono text-zinc-500">
-                          {socio.faixaEtaria}
-                        </span>
+                      <LayoutDashboard className="w-4 h-4" />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('socios')}
+                      className={`p-2 rounded-lg transition cursor-pointer ${
+                        activeTab === 'socios'
+                          ? 'bg-zinc-900 text-white border border-white/[0.1]'
+                          : 'hover:text-zinc-200 hover:bg-white/[0.03]'
+                      }`}
+                      title="Quadro Societário (QSA)"
+                    >
+                      <Users className="w-4 h-4" />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('cnaes')}
+                      className={`p-2 rounded-lg transition cursor-pointer ${
+                        activeTab === 'cnaes'
+                          ? 'bg-zinc-900 text-white border border-white/[0.1]'
+                          : 'hover:text-zinc-200 hover:bg-white/[0.03]'
+                      }`}
+                      title="Atividades Econômicas (CNAE)"
+                    >
+                      <Activity className="w-4 h-4" />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('json')}
+                      className={`p-2 rounded-lg transition cursor-pointer ${
+                        activeTab === 'json'
+                          ? 'bg-zinc-900 text-white border border-white/[0.1]'
+                          : 'hover:text-zinc-200 hover:bg-white/[0.03]'
+                      }`}
+                      title="Visualizador JSON"
+                    >
+                      <Code2 className="w-4 h-4" />
+                    </button>
+                  </nav>
+                </div>
+
+                {/* Bottom Control Dot */}
+                <div className="hidden md:flex flex-col items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" title="Sincronização Ativa"></div>
+                  <div className="w-7 h-7 rounded-lg bg-zinc-950 border border-white/[0.08] flex items-center justify-center text-[10px] font-mono text-zinc-400">
+                    RFB
+                  </div>
+                </div>
+              </aside>
+
+              {/* 2. Main Executive Command Dashboard */}
+              <div className="flex-1 flex flex-col bg-[#07070a]">
+                
+                {/* Dashboard Top Header Bar */}
+                <div className="px-6 py-3.5 border-b border-white/[0.08] bg-[#050507] flex flex-wrap items-center justify-between gap-4">
+                  {/* Breadcrumb Title */}
+                  <div className="flex items-center gap-2 text-xs font-mono">
+                    <span className="text-zinc-400 font-semibold tracking-wide">Inteligência Cadastral</span>
+                    <ChevronRight className="w-3.5 h-3.5 text-zinc-600" />
+                    <span className="text-white font-bold">Dashboard Executivo</span>
+                    <span className="text-zinc-600 ml-1">/</span>
+                    <span className="text-marsala-accent font-medium">{DEMO_COMPANY.cnpj}</span>
+                  </div>
+
+                  {/* Top Right Mini Search & Status */}
+                  <div className="flex items-center gap-3">
+                    <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-md bg-[#0a0a0d] border border-white/[0.06] text-xs font-mono text-zinc-400">
+                      <Search className="w-3.5 h-3.5 text-zinc-500" />
+                      <span>{DEMO_COMPANY.razaoSocial}</span>
+                    </div>
+
+                    <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-800/60 text-[10px] font-mono font-bold text-emerald-400">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                      <span>SITUAÇÃO ATIVA</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Dashboard Core Body */}
+                <div className="p-6 space-y-6 flex-1">
+                  
+                  {activeTab === 'dashboard' && (
+                    <div className="space-y-6 animate-fade-in">
+                      
+                      {/* Top Metric Cards Row (Exact Match to Screenshot Hierarchy) */}
+                      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                        
+                        <div className="p-5 rounded-xl bg-[#09090d] border border-white/[0.06] space-y-1">
+                          <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-400">Total Vínculos QSA</span>
+                          <div className="text-2xl sm:text-3xl font-black font-mono text-white tracking-tight">
+                            {DEMO_COMPANY.totalVinculos}
+                          </div>
+                          <span className="text-[10px] font-mono text-emerald-400 font-semibold">+47% de consistência cadastral</span>
+                        </div>
+
+                        <div className="p-5 rounded-xl bg-[#09090d] border border-white/[0.06] space-y-1">
+                          <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-400">Tempo de Atividade</span>
+                          <div className="text-2xl sm:text-3xl font-black font-mono text-white tracking-tight">
+                            {DEMO_COMPANY.tempoAtividade}
+                          </div>
+                          <span className="text-[10px] font-mono text-zinc-500">Abertura: 18/09/1953</span>
+                        </div>
+
+                        <div className="p-5 rounded-xl bg-[#09090d] border border-white/[0.06] space-y-1">
+                          <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-400">Impacto em SLA Cadastral</span>
+                          <div className="text-2xl sm:text-3xl font-black font-mono text-white tracking-tight">
+                            0
+                          </div>
+                          <span className="text-[10px] font-mono text-emerald-400 font-semibold">Zero pendências na RFB</span>
+                        </div>
+
+                        <div className="p-5 rounded-xl bg-[#09090d] border border-white/[0.06] space-y-1">
+                          <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-400">Filiais & Estabelecimentos</span>
+                          <div className="text-2xl sm:text-3xl font-black font-mono text-white tracking-tight">
+                            14
+                          </div>
+                          <span className="text-[10px] font-mono text-zinc-400">Rede corporativa nacional</span>
+                        </div>
+
                       </div>
-                      <p className="text-sm font-bold text-white">
-                        {socio.nome}
-                      </p>
-                      <span className="text-[10px] text-zinc-500 font-mono">
-                        Registro oficial perante a Receita Federal
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
 
-            {activeTab === 'atividades' && (
-              <div className="space-y-4 animate-fade-in text-left">
-                <div className="p-4 rounded-xl bg-[#07070a] border border-marsala-500/40">
-                  <span className="text-[10px] font-mono uppercase tracking-widest text-marsala-300">CNAE Principal</span>
-                  <p className="text-sm font-bold font-mono text-white mt-1">
-                    {SAMPLE_DEMO_DATA.cnaePrincipal.codigo} — {SAMPLE_DEMO_DATA.cnaePrincipal.descricao}
-                  </p>
-                </div>
+                      {/* Main Featured Command Card with SIGNATURE GLOWING RED / MARSALA LINE */}
+                      <div className="p-6 rounded-2xl bg-[#09090d] border border-white/[0.07] space-y-6 relative overflow-hidden">
+                        
+                        {/* Company Identification Banner */}
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                          <div className="space-y-1">
+                            <span className="text-[10px] font-mono text-marsala-accent uppercase tracking-widest font-bold">
+                              MATRIZ // GOVERNANÇA RFB
+                            </span>
+                            <h4 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                              {DEMO_COMPANY.razaoSocial}
+                            </h4>
+                            <p className="text-xs text-zinc-400 font-mono">
+                              {DEMO_COMPANY.naturezaJuridica} • Capital: {DEMO_COMPANY.capitalSocial}
+                            </p>
+                          </div>
 
-                <div className="space-y-2 pt-2">
-                  <span className="text-xs font-mono text-zinc-400 uppercase tracking-wider">
-                    Atividades Econômicas Secundárias (CNAEs)
-                  </span>
-                  <div className="divide-y divide-white/[0.04] border border-white/[0.06] rounded-xl overflow-hidden bg-[#07070a]">
-                    {SAMPLE_DEMO_DATA.cnaesSecundarios.map((item) => (
-                      <div key={item.codigo} className="p-3 text-xs flex flex-col sm:flex-row sm:items-center gap-2">
-                        <span className="font-mono text-zinc-400 min-w-[100px] shrink-0 font-semibold">
-                          {item.codigo}
-                        </span>
-                        <span className="text-zinc-200">{item.descricao}</span>
+                          <div className="text-right">
+                            <span className="text-[11px] font-mono text-zinc-500">INTEGRIDADE CADASTRAL</span>
+                            <div className="text-lg font-black font-mono text-white">100% REGULAR</div>
+                          </div>
+                        </div>
+
+                        {/* SIGNATURE GLOWING MARSALA / CRIMSON PROGRESS LINE (As seen in the screenshot!) */}
+                        <div className="space-y-1.5">
+                          <div className="h-1.5 w-full rounded-full bg-zinc-950 overflow-hidden">
+                            <div className="h-full w-[94%] rounded-full glow-marsala-bar"></div>
+                          </div>
+                          <div className="flex justify-between text-[10px] font-mono text-zinc-500">
+                            <span>Sincronização com a base pública da Receita Federal</span>
+                            <span className="text-marsala-accent font-bold">94% dos campos preenchidos</span>
+                          </div>
+                        </div>
+
+                        {/* Bottom Split Layout: Activity Wave Chart + Severity / Distribution Bars */}
+                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-2">
+                          
+                          {/* Left Column (7 cols): Cadastral Continuity Area Wave Chart */}
+                          <div className="lg:col-span-7 space-y-3">
+                            <div className="flex items-center justify-between text-xs font-mono text-zinc-400">
+                              <span className="uppercase text-[11px] font-semibold text-zinc-300">Análise de Continuidade Operacional</span>
+                              <span className="text-zinc-500 text-[10px]">1953 — 2026</span>
+                            </div>
+
+                            {/* SVG Marsala Area Wave Graph (Directly inspired by screenshot) */}
+                            <div className="h-36 w-full rounded-xl bg-[#060608] border border-white/[0.04] p-3 flex flex-col justify-between">
+                              <svg className="w-full h-24 overflow-visible" viewBox="0 0 400 100" preserveAspectRatio="none">
+                                <defs>
+                                  <linearGradient id="marsalaWave" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stopColor="#e11d48" stopOpacity="0.45" />
+                                    <stop offset="100%" stopColor="#be123c" stopOpacity="0.0" />
+                                  </linearGradient>
+                                </defs>
+                                {/* Area fill */}
+                                <path
+                                  d="M 0 85 Q 50 80, 100 70 T 200 45 T 300 15 T 400 30 L 400 100 L 0 100 Z"
+                                  fill="url(#marsalaWave)"
+                                />
+                                {/* Crimson wave stroke */}
+                                <path
+                                  d="M 0 85 Q 50 80, 100 70 T 200 45 T 300 15 T 400 30"
+                                  fill="none"
+                                  stroke="#e11d48"
+                                  strokeWidth="2.5"
+                                />
+                                {/* Peak point dot */}
+                                <circle cx="300" cy="15" r="4" fill="#ffffff" stroke="#e11d48" strokeWidth="2" />
+                              </svg>
+
+                              <div className="flex justify-between text-[10px] font-mono text-zinc-500 pt-2 border-t border-white/[0.03]">
+                                <span>Abertura (1953)</span>
+                                <span>Expansão de Capital</span>
+                                <span>Governança Colegiada</span>
+                                <span className="text-white font-semibold">Vigente (2026)</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Right Column (5 cols): Distribution Split Bars (Severity / Structure) */}
+                          <div className="lg:col-span-5 space-y-3">
+                            <div className="flex items-center justify-between text-xs font-mono text-zinc-400">
+                              <span className="uppercase text-[11px] font-semibold text-zinc-300">Estrutura Operacional & CNAE</span>
+                              <span className="text-zinc-500 text-[10px]">Segmentos</span>
+                            </div>
+
+                            <div className="p-3.5 rounded-xl bg-[#060608] border border-white/[0.04] space-y-3 font-mono text-xs">
+                              {/* Bar 1: Extração (Main) */}
+                              <div className="space-y-1">
+                                <div className="flex justify-between text-[10px]">
+                                  <span className="text-zinc-300">P1 — Extração de Petróleo e Gás</span>
+                                  <span className="text-marsala-accent font-bold">100% (Principal)</span>
+                                </div>
+                                <div className="h-2 w-full bg-zinc-950 rounded-full overflow-hidden">
+                                  <div className="h-full w-full bg-[#e11d48] rounded-full shadow-[0_0_8px_rgba(225,29,72,0.4)]"></div>
+                                </div>
+                              </div>
+
+                              {/* Bar 2: Refino */}
+                              <div className="space-y-1">
+                                <div className="flex justify-between text-[10px]">
+                                  <span className="text-zinc-400">P2 — Refino e Combustíveis</span>
+                                  <span className="text-zinc-300">82%</span>
+                                </div>
+                                <div className="h-2 w-full bg-zinc-950 rounded-full overflow-hidden">
+                                  <div className="h-full w-[82%] bg-[#be123c] rounded-full"></div>
+                                </div>
+                              </div>
+
+                              {/* Bar 3: Transporte Dutoviário */}
+                              <div className="space-y-1">
+                                <div className="flex justify-between text-[10px]">
+                                  <span className="text-zinc-400">P3 — Transporte Dutoviário</span>
+                                  <span className="text-zinc-300">54%</span>
+                                </div>
+                                <div className="h-2 w-full bg-zinc-950 rounded-full overflow-hidden">
+                                  <div className="h-full w-[54%] bg-[#9f1239] rounded-full"></div>
+                                </div>
+                              </div>
+
+                              <p className="text-[10px] text-zinc-500 pt-1 leading-tight">
+                                Nenhum impacto negativo ou restrição cadastral registrada perante a RFB.
+                              </p>
+                            </div>
+                          </div>
+
+                        </div>
+
                       </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
 
-            {activeTab === 'endereco' && (
-              <div className="space-y-4 animate-fade-in text-left">
-                <div className="p-5 rounded-xl bg-[#07070a] border border-white/[0.06] space-y-3">
-                  <div className="flex items-center gap-2 text-xs font-mono text-zinc-400 uppercase">
-                    <MapPin className="w-4 h-4 text-zinc-400" />
-                    <span>Endereço Fiscal Cadastrado</span>
-                  </div>
-                  <p className="text-base sm:text-lg font-medium text-white">
-                    {SAMPLE_DEMO_DATA.endereco.tipo} {SAMPLE_DEMO_DATA.endereco.logradouro}, {SAMPLE_DEMO_DATA.endereco.numero}
-                    {SAMPLE_DEMO_DATA.endereco.complemento ? ` — ${SAMPLE_DEMO_DATA.endereco.complemento}` : ''}
-                  </p>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 text-xs font-mono">
-                    <div>
-                      <span className="text-zinc-500">Bairro:</span>
-                      <p className="text-zinc-200">{SAMPLE_DEMO_DATA.endereco.bairro}</p>
                     </div>
-                    <div>
-                      <span className="text-zinc-500">Município / UF:</span>
-                      <p className="text-zinc-200">{SAMPLE_DEMO_DATA.endereco.municipio} - {SAMPLE_DEMO_DATA.endereco.uf}</p>
-                    </div>
-                    <div>
-                      <span className="text-zinc-500">CEP:</span>
-                      <p className="text-zinc-200">{SAMPLE_DEMO_DATA.endereco.cep}</p>
-                    </div>
-                    <div>
-                      <span className="text-zinc-500">Jurisdição:</span>
-                      <p className="text-zinc-200">RFB Rio de Janeiro</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+                  )}
 
-            {activeTab === 'json' && (
-              <div className="space-y-3 animate-fade-in text-left">
-                <div className="flex items-center justify-between text-xs font-mono text-zinc-400">
-                  <span>RESPOSTA BRUTA NORMALIZADA (JSON)</span>
-                  <button
-                    type="button"
-                    onClick={handleCopySampleJson}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white transition active:scale-95 cursor-pointer"
-                  >
-                    {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                    <span>{copied ? 'Copiado!' : 'Copiar JSON'}</span>
-                  </button>
-                </div>
-                <div className="p-4 rounded-xl bg-black border border-white/[0.08] font-mono text-xs text-zinc-300 overflow-x-auto max-h-72">
-                  <pre>{JSON.stringify(SAMPLE_DEMO_DATA, null, 2)}</pre>
-                </div>
-              </div>
-            )}
-          </div>
+                  {activeTab === 'socios' && (
+                    <div className="space-y-4 animate-fade-in">
+                      <div className="flex items-center justify-between text-xs font-mono text-zinc-400 pb-2 border-b border-white/[0.06]">
+                        <span className="text-white font-bold uppercase">Quadro Societário & Administradores (QSA)</span>
+                        <span>{DEMO_COMPANY.totalSocios} MEMBROS CADASTRADOS</span>
+                      </div>
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        {[
+                          { nome: 'MAGDA MARIA DE REGINA CHAMBRIARD', cargo: 'Diretor-Presidente', faixa: '61 a 70 anos' },
+                          { nome: 'FERNANDO REIS DE SANTANA', cargo: 'Diretor Executivo', faixa: '51 a 60 anos' },
+                          { nome: 'MAURICIO TOLMASQUIM', cargo: 'Diretor Executivo Transição Energética', faixa: '61 a 70 anos' },
+                          { nome: 'PIETRO ADAMO SAMPAIO MENDES', cargo: 'Presidente do Conselho de Administração', faixa: '41 a 50 anos' },
+                        ].map((socio) => (
+                          <div key={socio.nome} className="p-4 rounded-xl bg-[#09090d] border border-white/[0.06] space-y-1.5">
+                            <div className="flex items-center justify-between">
+                              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-950 text-marsala-300 border border-marsala-900/40 font-semibold">
+                                {socio.cargo}
+                              </span>
+                              <span className="text-[10px] font-mono text-zinc-500">{socio.faixa}</span>
+                            </div>
+                            <p className="text-sm font-bold text-white">{socio.nome}</p>
+                            <span className="text-[10px] text-zinc-500 font-mono">Registro oficial perante a Receita Federal</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
-          {/* Compliance & Demo Notice Footer */}
-          <div className="p-4 sm:p-5 bg-[#060608] border-t border-white/[0.08] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-zinc-500 text-left">
-            <div className="flex items-center gap-2">
-              <ShieldAlert className="w-4 h-4 text-zinc-400 shrink-0" />
-              <span>
-                Demonstração baseada em registros públicos oficiais da Receita Federal. O CNPJ Premium não emite certidões negativas nem atribui scores automáticos de crédito.
-              </span>
+                  {activeTab === 'cnaes' && (
+                    <div className="space-y-4 animate-fade-in">
+                      <div className="p-4 rounded-xl bg-[#09090d] border border-marsala-500/40">
+                        <span className="text-[10px] font-mono uppercase tracking-widest text-marsala-accent font-bold">CNAE Principal</span>
+                        <p className="text-sm font-bold font-mono text-white mt-1">{DEMO_COMPANY.cnaePrincipal}</p>
+                      </div>
+
+                      <div className="divide-y divide-white/[0.04] border border-white/[0.06] rounded-xl overflow-hidden bg-[#09090d] text-xs font-mono">
+                        {[
+                          ['19.21-7-00', 'Fabricação de produtos do refino de petróleo'],
+                          ['46.81-8-01', 'Comércio atacadista de álcool carburante, biodiesel, gasolina e derivados'],
+                          ['49.50-7-00', 'Transporte dutoviário'],
+                          ['35.11-5-01', 'Geração de energia elétrica'],
+                        ].map(([cod, desc]) => (
+                          <div key={cod} className="p-3 flex items-center gap-3">
+                            <span className="text-zinc-400 font-bold min-w-[90px]">{cod}</span>
+                            <span className="text-zinc-200">{desc}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {activeTab === 'json' && (
+                    <div className="space-y-3 animate-fade-in">
+                      <div className="flex items-center justify-between text-xs font-mono text-zinc-400">
+                        <span>RESPOSTA BRUTA NORMALIZADA (JSON)</span>
+                        <button
+                          type="button"
+                          onClick={handleCopyJson}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white transition active:scale-95 cursor-pointer"
+                        >
+                          {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                          <span>{copied ? 'Copiado!' : 'Copiar JSON'}</span>
+                        </button>
+                      </div>
+                      <div className="p-4 rounded-xl bg-black border border-white/[0.08] font-mono text-xs text-zinc-300 overflow-x-auto max-h-72">
+                        <pre>{JSON.stringify(DEMO_COMPANY, null, 2)}</pre>
+                      </div>
+                    </div>
+                  )}
+
+                </div>
+
+              </div>
+
             </div>
-            <button
-              type="button"
-              onClick={() => void onSelect(SAMPLE_DEMO_DATA.rawCnpj)}
-              disabled={isLoading}
-              className="text-xs text-zinc-300 hover:text-white font-mono underline underline-offset-4 shrink-0 transition cursor-pointer"
-            >
-              Testar esta empresa agora →
-            </button>
-          </div>
 
+          </div>
         </div>
 
       </div>
