@@ -9,19 +9,15 @@ export default function ArikManifestoSection() {
         <div className="animate-marquee flex items-center gap-12 font-sans font-light tracking-tighter text-5xl sm:text-7xl md:text-8xl lg:text-9xl text-white whitespace-nowrap">
           <span>CNPJ PREMIUM</span>
           <span className="font-serif italic text-[#dac5a7]">•</span>
-          <span>LEONARDO LABS</span>
-          <span className="font-serif italic text-[#dac5a7]">•</span>
-          <span>INTELIGÊNCIA EMPRESARIAL</span>
-          <span className="font-serif italic text-[#dac5a7]">•</span>
-          <span>DADOS OFICIAIS RFB</span>
+          <span>CNPJ PREMIUM</span>
           <span className="font-serif italic text-[#dac5a7]">•</span>
           <span>CNPJ PREMIUM</span>
           <span className="font-serif italic text-[#dac5a7]">•</span>
-          <span>LEONARDO LABS</span>
+          <span>CNPJ PREMIUM</span>
           <span className="font-serif italic text-[#dac5a7]">•</span>
-          <span>INTELIGÊNCIA EMPRESARIAL</span>
+          <span>CNPJ PREMIUM</span>
           <span className="font-serif italic text-[#dac5a7]">•</span>
-          <span>DADOS OFICIAIS RFB</span>
+          <span>CNPJ PREMIUM</span>
           <span className="font-serif italic text-[#dac5a7]">•</span>
         </div>
       </div>
