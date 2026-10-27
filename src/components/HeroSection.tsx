@@ -38,7 +38,7 @@ export default function HeroSection(props: HeroSectionProps) {
           >
             Inteligência Cadastral<br />
             <span className="font-serif italic font-normal text-[#dac5a7] text-4xl sm:text-6xl md:text-7xl lg:text-8xl block mt-1">
-              & Alta Precisão
+              para Empresas
             </span>
           </h1>
 
