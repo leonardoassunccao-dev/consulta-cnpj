@@ -3,62 +3,132 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CNPJ Premium — Inteligência Empresarial em Cada Consulta</title>
-    <meta name="description" content="Consulte empresas, organize informações cadastrais e descubra dados com clareza, precisão e privacidade. Plataforma desenvolvida pela Leonardo LABS." />
+    <title>CNPJ Premium — Consulta de CNPJ e Dados Cadastrais da Receita Federal</title>
+    <meta name="description" content="Consulte gratuitamente dados cadastrais de empresas brasileiras pelo CNPJ: situação cadastral na Receita Federal, CNAEs, quadro societário (QSA) e emissão de relatório PDF." />
     <meta name="theme-color" content="#0c0c0d" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <link rel="canonical" href="https://www.cnpjpremium.com.br/" />
+
+    <!-- Google Fonts & Preconnect -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,400;1,500;1,600;1,700&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-    <meta name="robots" content="index, follow" />
-    <!-- Google Search Console: add the official google-site-verification meta tag here only after Google provides the token. -->
-    <link rel="canonical" href="https://www.cnpjpremium.com.br/" />
+
+    <!-- Favicon & Manifest -->
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="pt_BR" />
-    <meta property="og:title" content="CNPJ Premium — Inteligência para decisões entre empresas" />
-    <meta property="og:description" content="Consulte empresas, analise informações e obtenha mais contexto para decisões comerciais e operacionais." />
     <meta property="og:site_name" content="CNPJ Premium" />
+    <meta property="og:title" content="CNPJ Premium — Consulta de CNPJ e Dados Cadastrais da Receita Federal" />
+    <meta property="og:description" content="Consulte gratuitamente a situação cadastral, CNAEs, quadro societário (QSA) e dados oficiais de empresas brasileiras pelo CNPJ de forma rápida e segura." />
     <meta property="og:url" content="https://www.cnpjpremium.com.br/" />
     <meta property="og:image" content="https://www.cnpjpremium.com.br/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="CNPJ Premium — consulta empresarial clara e organizada" />
+    <meta property="og:image:alt" content="CNPJ Premium — Consulta de CNPJ e inteligência cadastral de empresas" />
+
+    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="CNPJ Premium — Inteligência para decisões entre empresas" />
-    <meta name="twitter:description" content="Consulte empresas, analise informações e obtenha mais contexto para decisões comerciais e operacionais." />
+    <meta name="twitter:title" content="CNPJ Premium — Consulta de CNPJ e Dados Cadastrais da Receita Federal" />
+    <meta name="twitter:description" content="Consulte gratuitamente a situação cadastral, CNAEs, quadro societário (QSA) e dados oficiais de empresas brasileiras pelo CNPJ de forma rápida e segura." />
     <meta name="twitter:image" content="https://www.cnpjpremium.com.br/og-image.png" />
-    <meta name="twitter:image:alt" content="CNPJ Premium — consulta empresarial clara e organizada" />
+    <meta name="twitter:image:alt" content="CNPJ Premium — Consulta de CNPJ e inteligência cadastral de empresas" />
+
+    <!-- Structured Data (JSON-LD) conforme diretrizes oficiais do Google e Schema.org -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@graph": [
           {
+            "@type": "Organization",
+            "@id": "https://www.cnpjpremium.com.br/#organization",
+            "name": "CNPJ Premium",
+            "url": "https://www.cnpjpremium.com.br/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://www.cnpjpremium.com.br/apple-touch-icon.png",
+              "width": 180,
+              "height": 180
+            },
+            "sameAs": [
+              "https://www.leonardolab.com.br/"
+            ]
+          },
+          {
             "@type": "WebSite",
             "@id": "https://www.cnpjpremium.com.br/#website",
             "url": "https://www.cnpjpremium.com.br/",
             "name": "CNPJ Premium",
-            "inLanguage": "pt-BR"
+            "description": "Consulta gratuita de dados cadastrais e situação de empresas brasileiras na Receita Federal pelo CNPJ.",
+            "inLanguage": "pt-BR",
+            "publisher": {
+              "@id": "https://www.cnpjpremium.com.br/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://www.cnpjpremium.com.br/?cnpj={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
           },
           {
-            "@type": "SoftwareApplication",
+            "@type": "WebApplication",
             "@id": "https://www.cnpjpremium.com.br/#application",
             "name": "CNPJ Premium",
             "url": "https://www.cnpjpremium.com.br/",
-            "description": "Consulta gratuita de dados cadastrais de empresas brasileiras pelo CNPJ, com histórico, favoritos e visualização em JSON.",
             "applicationCategory": "BusinessApplication",
-            "operatingSystem": "Web",
+            "operatingSystem": "All",
+            "browserRequirements": "Requires JavaScript. Requires HTML5.",
             "isAccessibleForFree": true,
-            "inLanguage": "pt-BR"
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "BRL"
+            },
+            "description": "Ferramenta online para consulta cadastral de CNPJ: situação cadastral perante a Receita Federal, CNAEs, quadro de sócios (QSA) e exportação de relatório executivo em PDF.",
+            "inLanguage": "pt-BR",
+            "publisher": {
+              "@id": "https://www.cnpjpremium.com.br/#organization"
+            }
           }
         ]
       }
     </script>
   </head>
   <body>
-    <div id="root"></div>
+    <!-- Fallback semântico para crawlers e mecanismos de busca antes da hidratação do React -->
+    <div id="root">
+      <header>
+        <nav aria-label="Navegação Principal">
+          <span>CNPJ Premium</span>
+          <a href="#recursos">Recursos</a>
+          <a href="#processo">O Processo</a>
+          <a href="#demonstracao">Demonstração</a>
+          <a href="#metodologia">Metodologia</a>
+        </nav>
+      </header>
+      <main>
+        <section>
+          <h1>Inteligência Cadastral para Empresas</h1>
+          <p>Consulte empresas, organize informações societárias e acesse os dados oficiais da Receita Federal com velocidade e profundidade.</p>
+        </section>
+      </main>
+    </div>
+
+    <noscript>
+      <div style="padding: 2rem; text-align: center; color: #dac5a7; background-color: #0c0c0d; font-family: sans-serif;">
+        <h2>CNPJ Premium — Consulta Cadastral</h2>
+        <p>O CNPJ Premium requer JavaScript para consultar os dados abertos da Receita Federal em tempo real.</p>
+        <p>Para mais informações, consulte nossas <a href="/fontes-metodologia.html" style="color: #ffffff; text-decoration: underline;">Fontes e Metodologia</a>, <a href="/privacidade.html" style="color: #ffffff; text-decoration: underline;">Política de Privacidade</a> e <a href="/termos.html" style="color: #ffffff; text-decoration: underline;">Termos de Uso</a>.</p>
+      </div>
+    </noscript>
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-

@@ -56,9 +56,9 @@ export default function ArikServicesSection({ onSelectCnpj }: Props) {
 
       {/* 2. Official Ecosystem Logos Strip (Arik monochrome strip) */}
       <div className="w-full max-w-6xl mx-auto px-4">
-        <p className="text-center text-[10px] font-mono uppercase tracking-widest text-[#6a6660] mb-8">
+        <h2 className="text-center text-[10px] font-mono uppercase tracking-widest text-[#6a6660] mb-8">
           ECOSSISTEMA INTEGRADO DE FONTES PÚBLICAS BRASILEIRAS
-        </p>
+        </h2>
         <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-12 md:gap-16 opacity-60 hover:opacity-90 transition-opacity">
           {partners.map((partner) => (
             <div

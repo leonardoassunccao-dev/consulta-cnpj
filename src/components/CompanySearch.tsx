@@ -72,10 +72,17 @@ export default function CompanySearch({
             <Search className="w-4 h-4 shrink-0" aria-hidden="true" />
           </div>
 
+          {/* Accessible Hidden Label */}
+          <label htmlFor="cnpj-search-input" className="sr-only">
+            Digite o CNPJ da empresa para consulta cadastral
+          </label>
+
           {/* Input field */}
           <input
+            id="cnpj-search-input"
             type="text"
             value={cnpj}
+            aria-label="Digite o CNPJ da empresa para consulta cadastral"
             onChange={(e) => {
               const formatted = formatCnpjInput(e.target.value);
               setCnpj(formatted);

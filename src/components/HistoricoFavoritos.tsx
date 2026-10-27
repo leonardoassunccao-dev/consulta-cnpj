@@ -113,7 +113,8 @@ export default function HistoricoFavoritos({
   }
 
   return (
-    <section className="w-full max-w-5xl mx-auto space-y-4 text-left animate-fade-in" id="local-history-favorites-section">
+    <section className="w-full max-w-5xl mx-auto space-y-4 text-left animate-fade-in" id="local-history-favorites-section" aria-label="Histórico de Consultas e Favoritos">
+      <h2 className="sr-only">Histórico de Consultas e Favoritos Salvos</h2>
       {/* Header with tabs */}
       <div className="flex items-center justify-between border-b border-white/[0.08] pb-1">
         <div className="flex items-center gap-1">

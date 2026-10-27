@@ -28,12 +28,12 @@ export default function ArikManifestoSection() {
           
           {/* Left Column: Big Statement */}
           <div className="lg:col-span-5 space-y-3">
-            <h3 className="text-3xl sm:text-4xl md:text-5xl font-sans font-light tracking-tight text-white leading-[1.15]">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-light tracking-tight text-white leading-[1.15]">
               Informação que deixa <br />
               <span className="font-serif italic font-normal text-[#dac5a7] text-3xl sm:text-4xl md:text-5xl block mt-1">
                 uma impressão duradoura!
               </span>
-            </h3>
+            </h2>
           </div>
 
           {/* Right Column: Bio / Philosophy + Circular Action Buttons */}
