@@ -11,6 +11,7 @@ export default function Navbar({ onHomeClick, hasResult }: NavbarProps) {
 
   const navLinks = [
     { label: 'Recursos', href: '#recursos' },
+    { label: 'O Processo', href: '#processo' },
     { label: 'Demonstração', href: '#demonstracao' },
     { label: 'Metodologia', href: '#metodologia' },
   ];
@@ -23,98 +24,90 @@ export default function Navbar({ onHomeClick, hasResult }: NavbarProps) {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/[0.06] bg-[#030304]/90 backdrop-blur-md">
-      <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-        
-        {/* Brand: CNPJ Premium | Leonardo LABS */}
-        <div className="flex items-center gap-6">
+    <header className="sticky top-3 sm:top-5 z-50 w-full px-4 flex justify-center pointer-events-none">
+      <div className="pointer-events-auto w-full max-w-4xl flex flex-col items-center">
+        {/* Floating Capsule Bar (Arik signature) */}
+        <div className="w-full sm:w-auto flex items-center justify-between gap-3 sm:gap-7 px-4 py-2 sm:px-5 sm:py-2 rounded-full bg-[#141415]/90 border border-[#2d2b28] backdrop-blur-md shadow-[0_8px_32px_rgba(0,0,0,0.6)]">
+          
+          {/* Brand */}
           <button
             onClick={onHomeClick}
-            aria-label="CNPJ Premium — Página Inicial"
-            className="flex items-center gap-2.5 text-left group cursor-pointer focus:outline-none focus-visible:ring-1 focus-visible:ring-marsala-500 rounded py-1 transition"
+            aria-label="CNPJ Premium — Início"
+            className="flex items-center gap-2 group cursor-pointer text-left focus:outline-none"
           >
-            {/* Architectural Monogram Emblem */}
-            <div className="relative flex items-center justify-center w-7 h-7 rounded-md bg-zinc-950 border border-white/[0.12] group-hover:border-marsala-500/60 transition shadow-inner">
-              <span className="font-mono text-[10px] font-black tracking-tight text-white group-hover:text-marsala-300 transition-colors">
-                CP
-              </span>
-              <span className="absolute top-1 right-1 w-1 h-1 rounded-full bg-marsala-accent"></span>
-            </div>
-
-            <div className="flex items-baseline gap-2">
-              <span className="text-white font-sans font-bold text-sm tracking-tight leading-none group-hover:text-zinc-100 transition">
-                CNPJ <span className="text-zinc-400 font-normal">Premium</span>
-              </span>
-              <span className="text-[10px] font-mono tracking-wider text-zinc-500 uppercase hidden xs:inline-flex items-center gap-1.5">
-                <span className="w-1 h-1 rounded-full bg-marsala-accent"></span>
-                Leonardo LABS
-              </span>
-            </div>
+            <span className="font-sans font-extrabold text-sm tracking-tight text-white group-hover:text-[#dac5a7] transition">
+              cnpj premium<span className="text-[#dac5a7]">.</span>
+            </span>
+            <span className="hidden md:inline-block text-[9px] font-mono tracking-widest text-[#9e9b97] uppercase pl-2 border-l border-[#2d2b28]">
+              Leonardo LABS
+            </span>
           </button>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden sm:flex items-center gap-1 pl-4 border-l border-white/[0.08]" aria-label="Navegação Principal">
+          <nav className="hidden sm:flex items-center gap-1 md:gap-2" aria-label="Navegação">
             {navLinks.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
                 onClick={() => handleLinkClick(link.href)}
-                className="px-2.5 py-1 text-xs font-medium text-zinc-400 hover:text-white rounded hover:bg-white/[0.04] transition-colors duration-150"
+                className="px-2.5 py-1 text-[11px] font-sans font-medium uppercase tracking-wider text-[#9e9b97] hover:text-[#dac5a7] transition-colors rounded-full hover:bg-white/[0.03]"
               >
                 {link.label}
               </a>
             ))}
           </nav>
-        </div>
 
-        {/* Right Controls */}
-        <div className="flex items-center gap-3">
-          {hasResult && (
+          {/* Right Action Button (Arik solid champagne button) */}
+          <div className="flex items-center gap-2">
             <button
-              onClick={onHomeClick}
-              className="px-3 py-1 rounded-md text-xs font-semibold bg-white text-zinc-950 hover:bg-zinc-200 transition active:scale-95 shadow-sm cursor-pointer"
+              onClick={() => {
+                if (hasResult) onHomeClick();
+                else {
+                  const input = document.querySelector('input[type="text"]') as HTMLInputElement | null;
+                  input?.focus();
+                }
+              }}
+              className="px-4 py-1.5 sm:px-5 sm:py-1.5 rounded-full bg-[#dac5a7] hover:bg-[#edd6b6] text-[#0c0c0d] font-sans font-bold text-[11px] sm:text-xs tracking-wider uppercase transition shadow-sm cursor-pointer active:scale-95 shrink-0"
             >
-              Nova Consulta
+              {hasResult ? 'Nova Consulta' : 'Consultar'}
             </button>
-          )}
 
-          {/* Mobile Hamburger Toggle */}
-          <button
-            type="button"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-expanded={mobileMenuOpen}
-            aria-label={mobileMenuOpen ? 'Fechar menu' : 'Abrir menu de navegação'}
-            className="sm:hidden p-1.5 rounded-md border border-white/[0.1] text-zinc-400 hover:text-white hover:bg-white/[0.05] transition"
-          >
-            {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
-          </button>
+            {/* Mobile Hamburger Toggle */}
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-expanded={mobileMenuOpen}
+              aria-label={mobileMenuOpen ? 'Fechar menu' : 'Abrir menu'}
+              className="sm:hidden p-1.5 rounded-full text-[#9e9b97] hover:text-white hover:bg-white/[0.05] transition"
+            >
+              {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+            </button>
+          </div>
+
         </div>
 
-      </div>
-
-      {/* Mobile Drawer */}
-      {mobileMenuOpen && (
-        <div className="sm:hidden border-b border-white/[0.08] bg-[#07070a] px-5 py-4 space-y-3 animate-fade-in">
-          <div className="flex flex-col space-y-1">
+        {/* Mobile Dropdown Panel */}
+        {mobileMenuOpen && (
+          <div className="sm:hidden mt-2 w-full max-w-sm rounded-2xl bg-[#141415]/95 border border-[#2d2b28] p-4 space-y-2 shadow-2xl backdrop-blur-lg animate-fade-in">
             {navLinks.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
                 onClick={() => handleLinkClick(link.href)}
-                className="flex items-center justify-between py-2 text-sm font-medium text-zinc-300 hover:text-white transition"
+                className="flex items-center justify-between py-2 px-3 text-xs font-sans uppercase tracking-wider text-[#9e9b97] hover:text-[#dac5a7] rounded-lg hover:bg-white/[0.04] transition"
               >
                 <span>{link.label}</span>
-                <ArrowUpRight className="w-3.5 h-3.5 text-zinc-600" />
+                <ArrowUpRight className="w-3.5 h-3.5 text-[#6a6660]" />
               </a>
             ))}
+            <div className="pt-2 border-t border-[#2d2b28] flex items-center justify-between text-[10px] font-mono text-[#6a6660]">
+              <span>LEONARDO LABS</span>
+              <a href="/privacidade.html" className="underline hover:text-[#dac5a7]">Privacidade</a>
+            </div>
           </div>
+        )}
 
-          <div className="pt-3 border-t border-white/[0.06] flex items-center justify-between text-[11px] text-zinc-500 font-mono">
-            <span>LEONARDO LABS</span>
-            <a href="/privacidade.html" className="underline hover:text-zinc-300">Privacidade</a>
-          </div>
-        </div>
-      )}
+      </div>
     </header>
   );
 }

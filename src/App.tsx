@@ -95,8 +95,8 @@ export default function App() {
   }, [consultarCNPJ]);
 
   return (
-    <div className="min-h-screen bg-[#050505] text-zinc-100 flex flex-col font-sans selection:bg-[#7e384c] selection:text-white">
-      {/* Sticky High-End Navigation Bar */}
+    <div className="min-h-screen bg-[#0c0c0d] text-[#f5f3ef] flex flex-col font-sans selection:bg-[#dac5a7] selection:text-[#0c0c0d]">
+      {/* Sticky High-End Floating Navigation Bar */}
       <Navbar onHomeClick={handleHomeClick} hasResult={Boolean(data)} />
 
       {/* Main Container */}
@@ -138,20 +138,20 @@ export default function App() {
                 <CompanyComparison currentData={data} />
 
                 {/* PDF Export Banner */}
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-2xl border border-white/[0.08] bg-[#08080b] p-5 shadow-lg">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-2xl border border-[#2d2b28] bg-[#141415] p-5 shadow-lg">
                   <div className="flex items-start gap-3">
-                    <div className="p-2.5 rounded-xl bg-zinc-950 border border-white/[0.06] text-marsala-300">
+                    <div className="p-2.5 rounded-xl bg-[#181819] border border-[#2d2b28] text-[#dac5a7]">
                       <FileText className="w-5 h-5" />
                     </div>
                     <div>
                       <p className="text-sm font-bold text-white">Relatório de Análise Empresarial</p>
-                      <p className="mt-0.5 text-xs text-zinc-400">PDF executivo diagramado com os dados disponíveis e a análise cadastral.</p>
+                      <p className="mt-0.5 text-xs text-[#9e9b97]">PDF executivo diagramado com os dados disponíveis e a análise cadastral.</p>
                     </div>
                   </div>
                   <button
                     type="button"
                     onClick={() => void generateReport()}
-                    className="min-h-11 px-5 py-2.5 rounded-xl bg-white text-zinc-950 hover:bg-zinc-200 text-xs sm:text-sm font-semibold transition flex items-center gap-2 cursor-pointer active:scale-95 shrink-0 shadow-sm"
+                    className="min-h-11 px-5 py-2.5 rounded-xl bg-[#dac5a7] text-[#0c0c0d] hover:bg-[#edd6b6] text-xs sm:text-sm font-bold transition flex items-center gap-2 cursor-pointer active:scale-95 shrink-0 shadow-sm"
                   >
                     <span>Exportar Relatório PDF</span>
                     <ArrowRight className="w-4 h-4" />

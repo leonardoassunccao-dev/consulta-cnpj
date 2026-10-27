@@ -225,7 +225,7 @@ CNAE Principal: ${atividadePrincipalDesc}
           <p className="text-xs text-zinc-400 font-mono">
             {cnpjFormated} {nomeFantasia !== 'Não informado' ? `• ${nomeFantasia}` : ''}
           </p>
-          <div className="pt-2"><div className="h-1 w-56 rounded-full glow-marsala-bar"></div></div>
+          <div className="pt-2"><div className="h-1 w-56 rounded-full glow-champagne-bar"></div></div>
         </div>
 
         {/* Favorite toggle action */}
@@ -270,8 +270,8 @@ CNAE Principal: ${atividadePrincipalDesc}
             onClick={() => setActiveTab(tab.id as any)}
             className={`flex items-center gap-1.5 px-4 py-3 text-xs font-semibold rounded-xl border transition-all flex-shrink-0 cursor-pointer ${
               activeTab === tab.id
-                ? 'bg-zinc-100 border-zinc-200 text-zinc-950 font-bold shadow-lg shadow-zinc-100/5'
-                : 'bg-zinc-950/20 border-zinc-900/60 text-zinc-400 hover:bg-zinc-900/30 hover:text-zinc-200'
+                ? 'bg-[#dac5a7] border-[#dac5a7] text-[#0c0c0d] font-bold shadow-lg shadow-[#dac5a7]/10'
+                : 'bg-[#141415] border-[#2d2b28] text-[#9e9b97] hover:border-[#dac5a7]/40 hover:text-white'
             }`}
           >
             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
@@ -474,7 +474,7 @@ CNAE Principal: ${atividadePrincipalDesc}
                       .join('\n'),
                     'Dados para Cadastro'
                   )}
-                  className="min-h-11 w-full sm:w-auto px-3.5 py-2 bg-zinc-100 hover:bg-white text-zinc-950 rounded-xl text-xs font-bold transition active:scale-95"
+                  className="min-h-11 w-full sm:w-auto px-3.5 py-2 bg-[#dac5a7] hover:bg-[#edd6b6] text-[#0c0c0d] rounded-xl text-xs font-bold transition active:scale-95"
                 >
                   Copiar todos
                 </button>

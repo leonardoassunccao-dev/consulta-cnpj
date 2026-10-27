@@ -56,15 +56,15 @@ export default function ProductDemo({ onSelect, isLoading }: ProductDemoProps) {
         {/* Editorial Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 border-b border-white/[0.08] pb-6">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-zinc-400">
-              <span className="w-1.5 h-1.5 rounded-full bg-marsala-accent animate-pulse"></span>
-              <span>BLACK PRECISION // INTERFACE DE DADOS</span>
+            <div className="inline-flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-[#a8a49c]">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#dac5a7] animate-pulse"></span>
+              <span>COCKPIT DE INTELIGÊNCIA CADASTRAL</span>
             </div>
-            <h2 id="demo-title" className="text-2xl sm:text-4xl md:text-5xl font-sans font-black text-white tracking-tight">
-              A interface como demonstração.
+            <h2 id="demo-title" className="text-2xl sm:text-4xl md:text-5xl font-sans font-light text-white tracking-tight">
+              A interface como <span className="font-serif italic text-[#dac5a7]">demonstração</span>.
             </h2>
-            <p className="text-sm md:text-base text-zinc-400 max-w-2xl leading-relaxed">
-              Cockpit de inteligência cadastral de alto contraste, com acentos marsala, telemetria de governança e visualização arquitetônica em tempo real.
+            <p className="text-sm md:text-base text-[#9e9b97] max-w-2xl leading-relaxed">
+              Cockpit de inteligência cadastral de alto contraste, com acentos em champagne gold, telemetria de governança e visualização arquitetônica em tempo real.
             </p>
           </div>
 
@@ -73,10 +73,10 @@ export default function ProductDemo({ onSelect, isLoading }: ProductDemoProps) {
             <button
               type="button"
               onClick={() => setIs3DMode(!is3DMode)}
-              className="px-3.5 py-1.5 rounded-lg bg-[#0a0a0e] border border-white/[0.1] hover:border-marsala-500/50 text-xs font-mono text-zinc-300 hover:text-white transition flex items-center gap-2 cursor-pointer shadow-sm"
+              className="px-3.5 py-1.5 rounded-lg bg-[#0a0a0e] border border-white/[0.1] hover:border-[#dac5a7]/50 text-xs font-mono text-zinc-300 hover:text-white transition flex items-center gap-2 cursor-pointer shadow-sm"
               title="Alternar ângulo de perspectiva 3D"
             >
-              <Maximize2 className="w-3.5 h-3.5 text-marsala-accent" />
+              <Maximize2 className="w-3.5 h-3.5 text-[#dac5a7]" />
               <span>{is3DMode ? 'Visualização 3D Ativa' : 'Visualização Plana'}</span>
             </button>
 
@@ -107,8 +107,8 @@ export default function ProductDemo({ onSelect, isLoading }: ProductDemoProps) {
               {/* 1. Left Vertical Icon Rail (Matching reference screenshot) */}
               <aside className="w-full md:w-16 bg-[#040406] border-b md:border-b-0 md:border-r border-white/[0.08] p-3 flex md:flex-col items-center justify-between shrink-0">
                 <div className="flex md:flex-col items-center gap-4">
-                  {/* Glowing Marsala Logo Mark */}
-                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#e11d48] to-[#881337] flex items-center justify-center text-white font-black font-mono text-xs shadow-[0_0_16px_rgba(225,29,72,0.6)] cursor-pointer">
+                  {/* Glowing Logo Mark */}
+                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#edd6b6] to-[#8c7a65] flex items-center justify-center text-[#0c0c0d] font-black font-mono text-xs shadow-[0_0_16px_rgba(218,197,167,0.4)] cursor-pointer">
                     CP
                   </div>
 
@@ -188,7 +188,7 @@ export default function ProductDemo({ onSelect, isLoading }: ProductDemoProps) {
                     <ChevronRight className="w-3.5 h-3.5 text-zinc-600" />
                     <span className="text-white font-bold">Dashboard Executivo</span>
                     <span className="text-zinc-600 ml-1">/</span>
-                    <span className="text-marsala-accent font-medium">{DEMO_COMPANY.cnpj}</span>
+                    <span className="text-[#dac5a7] font-medium">{DEMO_COMPANY.cnpj}</span>
                   </div>
 
                   {/* Top Right Mini Search & Status */}
@@ -248,13 +248,13 @@ export default function ProductDemo({ onSelect, isLoading }: ProductDemoProps) {
 
                       </div>
 
-                      {/* Main Featured Command Card with SIGNATURE GLOWING RED / MARSALA LINE */}
+                      {/* Main Featured Command Card with SIGNATURE GLOWING CHAMPAGNE LINE */}
                       <div className="p-6 rounded-2xl bg-[#09090d] border border-white/[0.07] space-y-6 relative overflow-hidden">
                         
                         {/* Company Identification Banner */}
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                           <div className="space-y-1">
-                            <span className="text-[10px] font-mono text-marsala-accent uppercase tracking-widest font-bold">
+                            <span className="text-[10px] font-mono text-[#dac5a7] uppercase tracking-widest font-bold">
                               MATRIZ // GOVERNANÇA RFB
                             </span>
                             <h4 className="text-xl sm:text-2xl font-black text-white tracking-tight">
@@ -271,14 +271,14 @@ export default function ProductDemo({ onSelect, isLoading }: ProductDemoProps) {
                           </div>
                         </div>
 
-                        {/* SIGNATURE GLOWING MARSALA / CRIMSON PROGRESS LINE (As seen in the screenshot!) */}
+                        {/* SIGNATURE GLOWING CHAMPAGNE PROGRESS LINE */}
                         <div className="space-y-1.5">
                           <div className="h-1.5 w-full rounded-full bg-zinc-950 overflow-hidden">
-                            <div className="h-full w-[94%] rounded-full glow-marsala-bar"></div>
+                            <div className="h-full w-[94%] rounded-full glow-champagne-bar"></div>
                           </div>
                           <div className="flex justify-between text-[10px] font-mono text-zinc-500">
                             <span>Sincronização com a base pública da Receita Federal</span>
-                            <span className="text-marsala-accent font-bold">94% dos campos preenchidos</span>
+                            <span className="text-[#dac5a7] font-bold">94% dos campos preenchidos</span>
                           </div>
                         </div>
 
@@ -292,29 +292,29 @@ export default function ProductDemo({ onSelect, isLoading }: ProductDemoProps) {
                               <span className="text-zinc-500 text-[10px]">1953 — 2026</span>
                             </div>
 
-                            {/* SVG Marsala Area Wave Graph (Directly inspired by screenshot) */}
+                            {/* SVG Champagne Area Wave Graph */}
                             <div className="h-36 w-full rounded-xl bg-[#060608] border border-white/[0.04] p-3 flex flex-col justify-between">
                               <svg className="w-full h-24 overflow-visible" viewBox="0 0 400 100" preserveAspectRatio="none">
                                 <defs>
-                                  <linearGradient id="marsalaWave" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0%" stopColor="#e11d48" stopOpacity="0.45" />
-                                    <stop offset="100%" stopColor="#be123c" stopOpacity="0.0" />
+                                  <linearGradient id="champagneWave" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stopColor="#dac5a7" stopOpacity="0.45" />
+                                    <stop offset="100%" stopColor="#8c7a65" stopOpacity="0.0" />
                                   </linearGradient>
                                 </defs>
                                 {/* Area fill */}
                                 <path
                                   d="M 0 85 Q 50 80, 100 70 T 200 45 T 300 15 T 400 30 L 400 100 L 0 100 Z"
-                                  fill="url(#marsalaWave)"
+                                  fill="url(#champagneWave)"
                                 />
-                                {/* Crimson wave stroke */}
+                                {/* Champagne wave stroke */}
                                 <path
                                   d="M 0 85 Q 50 80, 100 70 T 200 45 T 300 15 T 400 30"
                                   fill="none"
-                                  stroke="#e11d48"
+                                  stroke="#dac5a7"
                                   strokeWidth="2.5"
                                 />
                                 {/* Peak point dot */}
-                                <circle cx="300" cy="15" r="4" fill="#ffffff" stroke="#e11d48" strokeWidth="2" />
+                                <circle cx="300" cy="15" r="4" fill="#ffffff" stroke="#dac5a7" strokeWidth="2" />
                               </svg>
 
                               <div className="flex justify-between text-[10px] font-mono text-zinc-500 pt-2 border-t border-white/[0.03]">
@@ -338,10 +338,10 @@ export default function ProductDemo({ onSelect, isLoading }: ProductDemoProps) {
                               <div className="space-y-1">
                                 <div className="flex justify-between text-[10px]">
                                   <span className="text-zinc-300">P1 — Extração de Petróleo e Gás</span>
-                                  <span className="text-marsala-accent font-bold">100% (Principal)</span>
+                                  <span className="text-[#dac5a7] font-bold">100% (Principal)</span>
                                 </div>
                                 <div className="h-2 w-full bg-zinc-950 rounded-full overflow-hidden">
-                                  <div className="h-full w-full bg-[#e11d48] rounded-full shadow-[0_0_8px_rgba(225,29,72,0.4)]"></div>
+                                  <div className="h-full w-full bg-[#dac5a7] rounded-full shadow-[0_0_8px_rgba(218,197,167,0.4)]"></div>
                                 </div>
                               </div>
 
@@ -352,7 +352,7 @@ export default function ProductDemo({ onSelect, isLoading }: ProductDemoProps) {
                                   <span className="text-zinc-300">82%</span>
                                 </div>
                                 <div className="h-2 w-full bg-zinc-950 rounded-full overflow-hidden">
-                                  <div className="h-full w-[82%] bg-[#be123c] rounded-full"></div>
+                                  <div className="h-full w-[82%] bg-[#bfa583] rounded-full"></div>
                                 </div>
                               </div>
 
@@ -363,7 +363,7 @@ export default function ProductDemo({ onSelect, isLoading }: ProductDemoProps) {
                                   <span className="text-zinc-300">54%</span>
                                 </div>
                                 <div className="h-2 w-full bg-zinc-950 rounded-full overflow-hidden">
-                                  <div className="h-full w-[54%] bg-[#9f1239] rounded-full"></div>
+                                  <div className="h-full w-[54%] bg-[#8c7a65] rounded-full"></div>
                                 </div>
                               </div>
 
@@ -395,7 +395,7 @@ export default function ProductDemo({ onSelect, isLoading }: ProductDemoProps) {
                         ].map((socio) => (
                           <div key={socio.nome} className="p-4 rounded-xl bg-[#09090d] border border-white/[0.06] space-y-1.5">
                             <div className="flex items-center justify-between">
-                              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-950 text-marsala-300 border border-marsala-900/40 font-semibold">
+                              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-950 text-[#dac5a7] border border-[#2d2b28] font-semibold">
                                 {socio.cargo}
                               </span>
                               <span className="text-[10px] font-mono text-zinc-500">{socio.faixa}</span>
@@ -410,8 +410,8 @@ export default function ProductDemo({ onSelect, isLoading }: ProductDemoProps) {
 
                   {activeTab === 'cnaes' && (
                     <div className="space-y-4 animate-fade-in">
-                      <div className="p-4 rounded-xl bg-[#09090d] border border-marsala-500/40">
-                        <span className="text-[10px] font-mono uppercase tracking-widest text-marsala-accent font-bold">CNAE Principal</span>
+                      <div className="p-4 rounded-xl bg-[#09090d] border border-[#dac5a7]/40">
+                        <span className="text-[10px] font-mono uppercase tracking-widest text-[#dac5a7] font-bold">CNAE Principal</span>
                         <p className="text-sm font-bold font-mono text-white mt-1">{DEMO_COMPANY.cnaePrincipal}</p>
                       </div>
 

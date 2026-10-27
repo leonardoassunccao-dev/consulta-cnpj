@@ -130,7 +130,7 @@ export default function HistoricoFavoritos({
               {history.length}
             </span>
             {activeTab === 'history' && (
-              <span className="absolute bottom-[-1px] left-0 right-0 h-[2px] bg-marsala-accent"></span>
+              <span className="absolute bottom-[-1px] left-0 right-0 h-[2px] bg-[#dac5a7]"></span>
             )}
           </button>
 
@@ -147,7 +147,7 @@ export default function HistoricoFavoritos({
               {favorites.length}
             </span>
             {activeTab === 'favorites' && (
-              <span className="absolute bottom-[-1px] left-0 right-0 h-[2px] bg-marsala-accent"></span>
+              <span className="absolute bottom-[-1px] left-0 right-0 h-[2px] bg-[#dac5a7]"></span>
             )}
           </button>
         </div>

@@ -59,16 +59,16 @@ export default function CompanySearch({
   return (
     <div className="w-full max-w-xl mx-auto space-y-3">
       <form onSubmit={handleSubmit} className="relative" role="search" noValidate>
-        {/* Minimalist Search Console */}
+        {/* Arik Minimalist Luxury Console */}
         <div
-          className={`relative flex items-center gap-2 p-1.5 sm:p-2 rounded-xl bg-[#09090c] border transition-all duration-200 ${
+          className={`relative flex items-center gap-2 p-1.5 sm:p-2 rounded-2xl bg-[#141415] border transition-all duration-300 shadow-[0_16px_40px_rgba(0,0,0,0.5)] ${
             error
-              ? 'border-red-800/80 ring-1 ring-red-900/30'
-              : 'border-white/[0.08] hover:border-white/[0.16] focus-within:border-white/30 focus-within:ring-1 focus-within:ring-marsala-500/25'
+              ? 'border-red-900/80 ring-1 ring-red-900/30'
+              : 'border-[#2d2b28] hover:border-[#dac5a7]/40 focus-within:border-[#dac5a7] focus-within:ring-2 focus-within:ring-[#dac5a7]/20'
           }`}
         >
           {/* Discrete Search Icon */}
-          <div className="pl-3 text-zinc-500 flex items-center">
+          <div className="pl-3.5 text-[#9e9b97] flex items-center">
             <Search className="w-4 h-4 shrink-0" aria-hidden="true" />
           </div>
 
@@ -90,7 +90,7 @@ export default function CompanySearch({
             onBlur={() => onAttentionChange?.('cursor')}
             aria-invalid={Boolean(error)}
             aria-describedby={error ? 'cnpj-input-error' : undefined}
-            className="flex-1 min-w-0 bg-transparent py-2.5 px-2 text-sm sm:text-base font-mono text-white placeholder:text-zinc-600 focus:outline-none tracking-wide disabled:text-zinc-600"
+            className="flex-1 min-w-0 bg-transparent py-2.5 px-2 text-sm sm:text-base font-mono text-[#f5f3ef] placeholder:text-[#6a6660] focus:outline-none tracking-wide disabled:text-[#6a6660]"
           />
 
           {/* Clear button if text entered */}
@@ -100,13 +100,13 @@ export default function CompanySearch({
               onClick={clearAll}
               disabled={isLoading}
               aria-label="Limpar consulta"
-              className="p-2 text-zinc-500 hover:text-white transition rounded-lg hover:bg-white/[0.05] cursor-pointer"
+              className="p-2 text-[#9e9b97] hover:text-white transition rounded-xl hover:bg-white/[0.05] cursor-pointer"
             >
               <X className="w-3.5 h-3.5" />
             </button>
           )}
 
-          {/* Action Button: Consultar */}
+          {/* Action Button: Consultar (Solid Champagne Arik Button) */}
           <button
             type="submit"
             disabled={isLoading}
@@ -114,11 +114,11 @@ export default function CompanySearch({
             onPointerLeave={() => onAttentionChange?.('cursor')}
             onFocus={() => onAttentionChange?.('button')}
             onBlur={() => onAttentionChange?.('cursor')}
-            className="h-10 sm:h-11 px-5 rounded-lg bg-white text-zinc-950 font-sans font-semibold text-xs sm:text-sm hover:bg-zinc-200 transition duration-150 flex items-center justify-center gap-2 select-none active:scale-[0.98] cursor-pointer disabled:opacity-50 shrink-0 shadow-sm"
+            className="h-10 sm:h-11 px-6 rounded-xl bg-[#dac5a7] text-[#0c0c0d] font-sans font-bold text-xs sm:text-sm hover:bg-[#edd6b6] transition duration-200 flex items-center justify-center gap-2 select-none active:scale-[0.98] cursor-pointer disabled:opacity-50 shrink-0 shadow-sm"
           >
             {isLoading ? (
               <>
-                <Loader2 className="w-3.5 h-3.5 animate-spin text-zinc-950" />
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-[#0c0c0d]" />
                 <span>Consultando…</span>
               </>
             ) : (
@@ -133,7 +133,7 @@ export default function CompanySearch({
         <div
           id="cnpj-input-error"
           role="alert"
-          className="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-950/30 border border-red-900/40 text-xs font-mono text-red-300 animate-fade-in"
+          className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-red-950/30 border border-red-900/40 text-xs font-mono text-red-300 animate-fade-in"
         >
           <span className="w-1.5 h-1.5 rounded-full bg-red-400 shrink-0"></span>
           <span>{error}</span>
