@@ -38,9 +38,6 @@ export default function Navbar({ onHomeClick, hasResult }: NavbarProps) {
             <span className="font-sans font-extrabold text-sm tracking-tight text-white group-hover:text-[#dac5a7] transition">
               cnpj premium<span className="text-[#dac5a7]">.</span>
             </span>
-            <span className="hidden md:inline-block text-[9px] font-mono tracking-widest text-[#9e9b97] uppercase pl-2 border-l border-[#2d2b28]">
-              Leonardo LABS
-            </span>
           </button>
 
           {/* Desktop Navigation Links */}
@@ -101,7 +98,7 @@ export default function Navbar({ onHomeClick, hasResult }: NavbarProps) {
               </a>
             ))}
             <div className="pt-2 border-t border-[#2d2b28] flex items-center justify-between text-[10px] font-mono text-[#6a6660]">
-              <span>LEONARDO LABS</span>
+              <span>CNPJ PREMIUM</span>
               <a href="/privacidade.html" className="underline hover:text-[#dac5a7]">Privacidade</a>
             </div>
           </div>
