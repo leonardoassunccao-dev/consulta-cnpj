@@ -106,10 +106,15 @@ export default function FooterSection() {
             <span>© 2026 Leonardo LABS. Todos os direitos reservados.</span>
           </div>
 
-          <div className="flex items-center gap-3 text-[11px]">
-            <span>Criado por Leonardo Assunção</span>
-            <span className="text-[#3d3b37]">•</span>
-            <span>Ambiente Oficial de Produção</span>
+          <div className="flex items-center gap-2 text-[11px]">
+            <a
+              href="https://www.leonardolab.com.br/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#9e9b97] hover:text-[#dac5a7] transition-colors underline decoration-[#3d3b37] underline-offset-4 hover:decoration-[#dac5a7]"
+            >
+              Um produto Leonardo LABS
+            </a>
           </div>
         </div>
 
