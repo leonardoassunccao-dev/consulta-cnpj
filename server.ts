@@ -1,8 +1,9 @@
 import express from 'express';
 import path from 'path';
 import { createServer as createViteServer } from 'vite';
-import { allowRequest } from './api/_lib/rateLimit';
+import { allowRequest, requestIdentity } from './api/_lib/rateLimit';
 import { withProviderGuard } from './api/_lib/providerGuard';
+import { normalizeBrasilApi } from './api/_lib/cnpjNormalizer';
 
 function validCnpj(value: string): boolean {
   if (!/^\d{14}$/.test(value) || /^(\d)\1{13}$/.test(value)) return false;
@@ -16,75 +17,140 @@ function validCnpj(value: string): boolean {
   return value.endsWith(`${first}${second}`);
 }
 
+async function queryCnpjWithFallback(cnpjLimpo: string): Promise<{ ok: boolean; status: number; data?: any; error?: string }> {
+  // 1. Primary provider: publica.cnpj.ws
+  try {
+    const primaryRes = await withProviderGuard(() => fetch(`https://publica.cnpj.ws/cnpj/${cnpjLimpo}`, {
+      method: 'GET',
+      signal: AbortSignal.timeout(6_000),
+      headers: {
+        'Accept': 'application/json',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) CNPJ-Lookup-Dashboard',
+      },
+    }));
+
+    if (primaryRes.status === 404) {
+      return { ok: false, status: 404, error: 'CNPJ não encontrado na base de dados.' };
+    }
+    if (primaryRes.ok) {
+      const data = await primaryRes.json();
+      return { ok: true, status: 200, data };
+    }
+  } catch {
+    // Primary timed out or encountered an upstream error; proceed to resilient fallback
+  }
+
+  // 2. Resilient fallback provider: BrasilAPI (open public API)
+  try {
+    const fallbackRes = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpjLimpo}`, {
+      method: 'GET',
+      signal: AbortSignal.timeout(6_000),
+      headers: {
+        'Accept': 'application/json',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) CNPJ-Lookup-Dashboard',
+      },
+    });
+
+    if (fallbackRes.status === 404) {
+      return { ok: false, status: 404, error: 'CNPJ não encontrado na base de dados.' };
+    }
+    if (fallbackRes.ok) {
+      const bData = await fallbackRes.json();
+      return { ok: true, status: 200, data: normalizeBrasilApi(bData) };
+    }
+  } catch {
+    // Fallback also failed or timed out
+  }
+
+  return { ok: false, status: 504, error: 'O serviço de consulta da Receita Federal demorou para responder. Tente novamente em instantes.' };
+}
+
+const CSP = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data:; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests";
+
 async function startServer() {
   const app = express();
   const PORT = Number(process.env.PORT) || 3000;
 
-  // Let Express parse JSON bodies if needed
-  app.use(express.json());
+  // Security: By default trust loopback/local proxies. If running behind a cloud proxy (e.g. AWS ALB, Cloud Run), configure TRUST_PROXY=1 in env.
+  const trustProxySetting = process.env.TRUST_PROXY
+    ? (process.env.TRUST_PROXY === 'true' ? 1 : process.env.TRUST_PROXY === 'false' ? false : process.env.TRUST_PROXY)
+    : 'loopback';
+  app.set('trust proxy', trustProxySetting);
   app.disable('x-powered-by');
-  app.use((_req, res, next) => {
+
+  // Enforce body limit to prevent memory exhaustion DoS
+  app.use(express.json({ limit: '10kb' }));
+
+  // Global enterprise security headers
+  app.use((req, res, next) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'DENY');
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
     res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
-    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+    res.setHeader('Cross-Origin-Resource-Policy', 'same-origin');
+    res.setHeader('Content-Security-Policy', CSP);
+
+    // Apply HSTS when served via HTTPS (avoids breaking local HTTP development)
+    const isHttps = req.secure || req.headers['x-forwarded-proto'] === 'https';
+    if (isHttps) {
+      res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+    }
     next();
   });
 
   // 1. CNPJ Serverless-like API Endpoint
-  app.get('/api/cnpj/:cnpj', async (req, res) => {
-    if (!allowRequest(`company:${req.ip}`, 60)) return res.status(429).json({ error: 'Muitas consultas em sequência. Aguarde um instante.' });
+  app.all('/api/cnpj/:cnpj', async (req, res) => {
+    res.setHeader('Cross-Origin-Resource-Policy', 'same-origin');
+
+    if (req.method === 'OPTIONS') {
+      res.setHeader('Allow', 'GET, HEAD, OPTIONS');
+      res.setHeader('Cache-Control', 'no-store');
+      return res.status(204).end();
+    }
+
+    if (req.method !== 'GET' && req.method !== 'HEAD') {
+      res.setHeader('Allow', 'GET, HEAD, OPTIONS');
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+      return res.status(405).json({ error: 'Método não permitido. Use GET ou HEAD.' });
+    }
+
+    const clientIdentity = requestIdentity(req.headers, req.ip);
+    if (!allowRequest(`company:${clientIdentity}`, 60)) {
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+      res.setHeader('Retry-After', '60');
+      return res.status(429).json({ error: 'Muitas consultas em sequência. Aguarde um instante.' });
+    }
+
     const { cnpj } = req.params;
 
     if (!cnpj) {
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
       return res.status(400).json({ error: 'CNPJ não informado.' });
     }
 
     const cnpjLimpo = cnpj.replace(/\D/g, '');
 
     if (!validCnpj(cnpjLimpo)) {
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
       return res.status(400).json({
         error: 'Digite um CNPJ válido.',
       });
     }
 
-    const publicApiUrl = `https://publica.cnpj.ws/cnpj/${cnpjLimpo}`;
+    const result = await queryCnpjWithFallback(cnpjLimpo);
 
-    try {
-      const apiResponse = await withProviderGuard(() => fetch(publicApiUrl, {
-        method: 'GET',
-        signal: AbortSignal.timeout(12_000),
-        headers: {
-          'Accept': 'application/json',
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) CNPJ-Lookup-Dashboard',
-        },
-      }));
-
-      if (apiResponse.status === 404) {
-        return res.status(404).json({ error: 'CNPJ não encontrado na base de dados.' });
-      }
-
-      if (apiResponse.status === 429) {
-        return res.status(429).json({
-          error: 'Muitas consultas realizadas ao serviço de CNPJ. Por favor, tente novamente em alguns instantes.',
-        });
-      }
-
-      if (!apiResponse.ok) {
-        return res.status(apiResponse.status).json({
-          error: `Erro ao buscar dados na API externa. Código de status: ${apiResponse.status}`,
-        });
-      }
-
-      const data = await apiResponse.json();
-      return res.json(data);
-
-    } catch (error: any) {
-      console.error('[CNPJ Server Error]', error instanceof Error ? error.name : 'UnknownError');
-      return res.status(500).json({
-        error: 'Não foi possível realizar a consulta agora.',
-      });
+    if (!result.ok) {
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+      return res.status(result.status).json({ error: result.error });
     }
+
+    // Cache successful responses only (30 minutes)
+    res.setHeader('Cache-Control', 'public, s-maxage=1800, stale-while-revalidate=3600');
+    if (req.method === 'HEAD') {
+      return res.status(200).end();
+    }
+    return res.json(result.data);
   });
 
   // 2. Vite Middleware Setup

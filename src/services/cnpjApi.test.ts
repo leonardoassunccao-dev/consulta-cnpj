@@ -27,10 +27,14 @@ describe('CNPJ public API client', () => {
     const fetchMock = vi.fn()
       .mockResolvedValueOnce(new Response(JSON.stringify({ error: 'missing' }), { status: 404 }))
       .mockResolvedValueOnce(new Response(JSON.stringify({ error: 'limited' }), { status: 429 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ error: 'gateway timeout' }), { status: 504 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ error: 'internal error' }), { status: 500 }))
       .mockRejectedValueOnce(Object.assign(new Error('timeout'), { name: 'AbortError' }));
     vi.stubGlobal('fetch', fetchMock);
 
     expect((await fetchCnpj('47960950000121')).errorType).toBe('NOT_FOUND');
+    expect((await fetchCnpj('47960950000121')).errorType).toBe('API_ERROR');
+    expect((await fetchCnpj('47960950000121')).errorType).toBe('API_ERROR');
     expect((await fetchCnpj('47960950000121')).errorType).toBe('API_ERROR');
     expect((await fetchCnpj('47960950000121')).errorType).toBe('TIMEOUT');
   });

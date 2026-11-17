@@ -57,7 +57,7 @@ export default function ArikManifestoSection() {
               <a
                 href="https://github.com/leonardoassunccao-dev/consulta-cnpj"
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#141415] border border-[#2d2b28] hover:border-[#dac5a7] text-xs font-sans text-[#f5f3ef] hover:text-[#dac5a7] transition duration-200"
                 aria-label="Repositório GitHub"
               >

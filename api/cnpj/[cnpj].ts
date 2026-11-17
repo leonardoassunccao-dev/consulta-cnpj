@@ -4,6 +4,7 @@
  */
 import { allowRequest, requestIdentity } from '../_lib/rateLimit.js';
 import { withProviderGuard } from '../_lib/providerGuard.js';
+import { normalizeBrasilApi } from '../_lib/cnpjNormalizer.js';
 
 function validCnpj(value: string): boolean {
   if (!/^\d{14}$/.test(value) || /^(\d)\1{13}$/.test(value)) return false;
@@ -17,73 +18,108 @@ function validCnpj(value: string): boolean {
   return value.endsWith(`${first}${second}`);
 }
 
-export default async function handler(req: any, res: any) {
-  res.setHeader('X-Content-Type-Options', 'nosniff');
-  res.setHeader('Cache-Control', 'public, s-maxage=1800, stale-while-revalidate=3600');
-
-  // Handle preflight requests
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
-
-  // We only permit GET requests
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Método não permitido. Use GET.' });
-  }
-  if (!allowRequest(`company:${requestIdentity(req.headers)}`, 60)) return res.status(429).json({ error: 'Muitas consultas em sequência. Aguarde um instante.' });
-
-  // extract CNPJ from query (Vercel automatic routing matches [cnpj])
-  const { cnpj } = req.query;
-
-  if (!cnpj || typeof cnpj !== 'string') {
-    return res.status(400).json({ error: 'CNPJ não informado ou formato inválido.' });
-  }
-
-  // Clean the CNPJ parameter
-  const cnpjLimpo = cnpj.replace(/\D/g, '');
-
-  if (!validCnpj(cnpjLimpo)) {
-    return res.status(400).json({
-      error: 'Digite um CNPJ válido.',
-    });
-  }
-
-  const publicApiUrl = `https://publica.cnpj.ws/cnpj/${cnpjLimpo}`;
-
+async function queryCnpjWithFallback(cnpjLimpo: string): Promise<{ ok: boolean; status: number; data?: any; error?: string }> {
+  // 1. Primary provider: publica.cnpj.ws
   try {
-    const apiResponse = await withProviderGuard(() => fetch(publicApiUrl, {
+    const primaryRes = await withProviderGuard(() => fetch(`https://publica.cnpj.ws/cnpj/${cnpjLimpo}`, {
       method: 'GET',
-      signal: AbortSignal.timeout(12_000),
+      signal: AbortSignal.timeout(6_000),
       headers: {
         'Accept': 'application/json',
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) CNPJ-Lookup-Dashboard',
       },
     }));
 
-    if (apiResponse.status === 404) {
-      return res.status(404).json({ error: 'CNPJ não encontrado na base de dados.' });
+    if (primaryRes.status === 404) {
+      return { ok: false, status: 404, error: 'CNPJ não encontrado na base de dados.' };
     }
-
-    if (apiResponse.status === 429) {
-      return res.status(429).json({
-        error: 'Muitas consultas realizadas ao serviço de CNPJ. Por favor, tente novamente em alguns instantes.',
-      });
+    if (primaryRes.ok) {
+      const data = await primaryRes.json();
+      return { ok: true, status: 200, data };
     }
+  } catch {
+    // Primary timed out or encountered an upstream error; proceed to resilient fallback
+  }
 
-    if (!apiResponse.ok) {
-      return res.status(apiResponse.status).json({
-        error: `Erro ao buscar dados na API externa. Código de status: ${apiResponse.status}`,
-      });
+  // 2. Resilient fallback provider: BrasilAPI (open public API)
+  try {
+    const fallbackRes = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpjLimpo}`, {
+      method: 'GET',
+      signal: AbortSignal.timeout(6_000),
+      headers: {
+        'Accept': 'application/json',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) CNPJ-Lookup-Dashboard',
+      },
+    });
+
+    if (fallbackRes.status === 404) {
+      return { ok: false, status: 404, error: 'CNPJ não encontrado na base de dados.' };
     }
+    if (fallbackRes.ok) {
+      const bData = await fallbackRes.json();
+      return { ok: true, status: 200, data: normalizeBrasilApi(bData) };
+    }
+  } catch {
+    // Fallback also failed or timed out
+  }
 
-    const data = await apiResponse.json();
-    return res.status(200).json(data);
+  return { ok: false, status: 504, error: 'O serviço de consulta da Receita Federal demorou para responder. Tente novamente em instantes.' };
+}
 
-  } catch (error: any) {
-    console.error('CNPJ_PROVIDER_ERROR', error instanceof Error ? error.name : 'UnknownError');
-    return res.status(500).json({
-      error: 'Não foi possível realizar a consulta agora.',
+export default async function handler(req: any, res: any) {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Cross-Origin-Resource-Policy', 'same-origin');
+
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Allow', 'GET, HEAD, OPTIONS');
+    res.setHeader('Cache-Control', 'no-store');
+    return res.status(204).end();
+  }
+
+  // We permit GET and HEAD requests
+  if (req.method !== 'GET' && req.method !== 'HEAD') {
+    res.setHeader('Allow', 'GET, HEAD, OPTIONS');
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+    return res.status(405).json({ error: 'Método não permitido. Use GET ou HEAD.' });
+  }
+
+  const clientIdentity = requestIdentity(req.headers, req.socket?.remoteAddress);
+  if (!allowRequest(`company:${clientIdentity}`, 60)) {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+    res.setHeader('Retry-After', '60');
+    return res.status(429).json({ error: 'Muitas consultas em sequência. Aguarde um instante.' });
+  }
+
+  // Extract CNPJ from query parameter
+  const { cnpj } = req.query;
+
+  if (!cnpj || typeof cnpj !== 'string') {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+    return res.status(400).json({ error: 'CNPJ não informado ou formato inválido.' });
+  }
+
+  // Clean and validate CNPJ digits
+  const cnpjLimpo = cnpj.replace(/\D/g, '');
+
+  if (!validCnpj(cnpjLimpo)) {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+    return res.status(400).json({
+      error: 'Digite um CNPJ válido.',
     });
   }
+
+  const result = await queryCnpjWithFallback(cnpjLimpo);
+
+  if (!result.ok) {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+    return res.status(result.status).json({ error: result.error });
+  }
+
+  // Cache successful responses only (30 minutes in edge cache)
+  res.setHeader('Cache-Control', 'public, s-maxage=1800, stale-while-revalidate=3600');
+  if (req.method === 'HEAD') {
+    return res.status(200).end();
+  }
+  return res.status(200).json(result.data);
 }

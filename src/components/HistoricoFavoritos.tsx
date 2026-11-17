@@ -83,10 +83,12 @@ export default function HistoricoFavoritos({
     try {
       const favsCached = localStorage.getItem('premium_cnpj_favorites');
       if (favsCached) {
-        let favsList: FavoriteItem[] = JSON.parse(favsCached);
-        favsList = favsList.filter((item) => item.cnpj !== cnpjToRemove);
-        localStorage.setItem('premium_cnpj_favorites', JSON.stringify(favsList));
-        setFavorites(favsList);
+        const parsed = JSON.parse(favsCached);
+        if (Array.isArray(parsed)) {
+          const favsList = parsed.filter((item) => item && item.cnpj !== cnpjToRemove);
+          localStorage.setItem('premium_cnpj_favorites', JSON.stringify(favsList));
+          setFavorites(favsList);
+        }
       }
     } catch (e) {
       console.error(e);
@@ -98,10 +100,12 @@ export default function HistoricoFavoritos({
     try {
       const historyCached = localStorage.getItem('premium_cnpj_history');
       if (historyCached) {
-        let historyList: HistoryItem[] = JSON.parse(historyCached);
-        historyList = historyList.filter((item) => item.cnpj !== cnpjToRemove);
-        localStorage.setItem('premium_cnpj_history', JSON.stringify(historyList));
-        setHistory(historyList);
+        const parsed = JSON.parse(historyCached);
+        if (Array.isArray(parsed)) {
+          const historyList = parsed.filter((item) => item && item.cnpj !== cnpjToRemove);
+          localStorage.setItem('premium_cnpj_history', JSON.stringify(historyList));
+          setHistory(historyList);
+        }
       }
     } catch (err) {
       console.error(err);
