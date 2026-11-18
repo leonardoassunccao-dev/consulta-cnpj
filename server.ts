@@ -4,6 +4,7 @@ import { createServer as createViteServer } from 'vite';
 import { allowRequest, requestIdentity } from './api/_lib/rateLimit';
 import { withProviderGuard } from './api/_lib/providerGuard';
 import { normalizeBrasilApi } from './api/_lib/cnpjNormalizer';
+import { readJsonWithStreamLimit, validateAndSanitizeCnpjData } from './api/_lib/cnpjSchema';
 
 function validCnpj(value: string): boolean {
   if (!/^\d{14}$/.test(value) || /^(\d)\1{13}$/.test(value)) return false;
@@ -17,7 +18,7 @@ function validCnpj(value: string): boolean {
   return value.endsWith(`${first}${second}`);
 }
 
-async function queryCnpjWithFallback(cnpjLimpo: string): Promise<{ ok: boolean; status: number; data?: any; error?: string }> {
+async function queryCnpjWithFallback(cnpjLimpo: string): Promise<{ ok: boolean; status: number; data?: any; error?: string; code?: string }> {
   // 1. Primary provider: publica.cnpj.ws
   try {
     const primaryRes = await withProviderGuard(() => fetch(`https://publica.cnpj.ws/cnpj/${cnpjLimpo}`, {
@@ -30,14 +31,21 @@ async function queryCnpjWithFallback(cnpjLimpo: string): Promise<{ ok: boolean; 
     }));
 
     if (primaryRes.status === 404) {
-      return { ok: false, status: 404, error: 'CNPJ não encontrado na base de dados.' };
+      return { ok: false, status: 404, error: 'CNPJ não encontrado na base de dados.', code: 'NOT_FOUND' };
     }
     if (primaryRes.ok) {
-      const data = await primaryRes.json();
-      return { ok: true, status: 200, data };
+      const data = await readJsonWithStreamLimit(primaryRes);
+      const sanitized = validateAndSanitizeCnpjData(data);
+      if (sanitized) {
+        return { ok: true, status: 200, data: sanitized };
+      }
     }
-  } catch {
-    // Primary timed out or encountered an upstream error; proceed to resilient fallback
+  } catch (err: any) {
+    if (err?.message === 'PAYLOAD_TOO_LARGE') {
+      console.error(`[CNPJ-API] [${cnpjLimpo}] Primary response exceeded 1MB stream limit.`);
+      return { ok: false, status: 502, error: 'Resposta do provedor excedeu o limite máximo seguro de 1 MB.', code: 'PAYLOAD_TOO_LARGE' };
+    }
+    console.error(`[CNPJ-API] [${cnpjLimpo}] Primary provider error: ${err?.message || err}`);
   }
 
   // 2. Resilient fallback provider: BrasilAPI (open public API)
@@ -52,17 +60,25 @@ async function queryCnpjWithFallback(cnpjLimpo: string): Promise<{ ok: boolean; 
     });
 
     if (fallbackRes.status === 404) {
-      return { ok: false, status: 404, error: 'CNPJ não encontrado na base de dados.' };
+      return { ok: false, status: 404, error: 'CNPJ não encontrado na base de dados.', code: 'NOT_FOUND' };
     }
     if (fallbackRes.ok) {
-      const bData = await fallbackRes.json();
-      return { ok: true, status: 200, data: normalizeBrasilApi(bData) };
+      const bData = await readJsonWithStreamLimit(fallbackRes);
+      const normalized = normalizeBrasilApi(bData);
+      const sanitized = validateAndSanitizeCnpjData(normalized);
+      if (sanitized) {
+        return { ok: true, status: 200, data: sanitized };
+      }
     }
-  } catch {
-    // Fallback also failed or timed out
+  } catch (err: any) {
+    if (err?.message === 'PAYLOAD_TOO_LARGE') {
+      console.error(`[CNPJ-API] [${cnpjLimpo}] Fallback response exceeded 1MB stream limit.`);
+      return { ok: false, status: 502, error: 'Resposta do provedor excedeu o limite máximo seguro de 1 MB.', code: 'PAYLOAD_TOO_LARGE' };
+    }
+    console.error(`[CNPJ-API] [${cnpjLimpo}] Fallback provider error: ${err?.message || err}`);
   }
 
-  return { ok: false, status: 504, error: 'O serviço de consulta da Receita Federal demorou para responder. Tente novamente em instantes.' };
+  return { ok: false, status: 504, error: 'O serviço de consulta da Receita Federal demorou para responder. Tente novamente em instantes.', code: 'PROVIDER_TIMEOUT' };
 }
 
 const CSP = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data:; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests";
@@ -112,21 +128,21 @@ async function startServer() {
     if (req.method !== 'GET' && req.method !== 'HEAD') {
       res.setHeader('Allow', 'GET, HEAD, OPTIONS');
       res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
-      return res.status(405).json({ error: 'Método não permitido. Use GET ou HEAD.' });
+      return res.status(405).json({ error: 'Método não permitido. Use GET ou HEAD.', code: 'METHOD_NOT_ALLOWED' });
     }
 
     const clientIdentity = requestIdentity(req.headers, req.ip);
     if (!allowRequest(`company:${clientIdentity}`, 60)) {
       res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
       res.setHeader('Retry-After', '60');
-      return res.status(429).json({ error: 'Muitas consultas em sequência. Aguarde um instante.' });
+      return res.status(429).json({ error: 'Muitas consultas em sequência. Aguarde um instante.', code: 'RATE_LIMITED' });
     }
 
     const { cnpj } = req.params;
 
     if (!cnpj) {
       res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
-      return res.status(400).json({ error: 'CNPJ não informado.' });
+      return res.status(400).json({ error: 'CNPJ não informado.', code: 'INVALID_PARAM' });
     }
 
     const cnpjLimpo = cnpj.replace(/\D/g, '');
@@ -135,6 +151,7 @@ async function startServer() {
       res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
       return res.status(400).json({
         error: 'Digite um CNPJ válido.',
+        code: 'INVALID_CNPJ',
       });
     }
 
@@ -142,7 +159,7 @@ async function startServer() {
 
     if (!result.ok) {
       res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
-      return res.status(result.status).json({ error: result.error });
+      return res.status(result.status).json({ error: result.error, code: result.code });
     }
 
     // Cache successful responses only (30 minutes)

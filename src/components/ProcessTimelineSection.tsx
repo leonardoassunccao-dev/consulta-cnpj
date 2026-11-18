@@ -45,13 +45,13 @@ export default function ProcessTimelineSection() {
     },
     {
       index: '04',
-      tag: 'DOSSIÊ // EXPORTAÇÃO EXECUTIVA',
-      duration: 'OFFLINE',
-      title: 'RELATÓRIO PDF DIAGRAMADO',
-      desc: 'Gere instantaneamente um documento executivo formal com a síntese cadastral e a análise de maturidade da empresa, pronto para anexar em pareceres.',
+      tag: 'PAINEL // INTELIGÊNCIA CADASTRAL',
+      duration: 'TEMPO REAL',
+      title: 'ANÁLISE DE CONTEXTO E RISCO',
+      desc: 'Visualize instantaneamente a síntese cadastral e a análise de maturidade da empresa em painéis interativos de alta precisão para tomada de decisão.',
       bullets: [
         'Layout editorial de alto contraste e legibilidade impecável',
-        'Renderização 100% no cliente sem envio de dados para servidores',
+        'Processamento 100% no navegador com total privacidade de dados',
         'Carimbo com data e hora oficial da consulta para conformidade',
       ],
       align: 'left',

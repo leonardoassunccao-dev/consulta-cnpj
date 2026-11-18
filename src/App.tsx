@@ -5,14 +5,14 @@ import LoadingSkeleton from './components/LoadingSkeleton';
 import ErrorState from './components/ErrorState';
 import VisualizadorEmpresaTabs from './components/VisualizadorEmpresaTabs';
 import ErrorBoundary from './components/ErrorBoundary';
-import BusinessAnalysis, { HiringAnalysis } from './components/BusinessAnalysis';
+import BusinessAnalysis from './components/BusinessAnalysis';
 import ConsultationSources from './components/ConsultationSources';
 import CompanyComparison from './components/CompanyComparison';
 import HeroSection from './components/HeroSection';
 import MainLanding from './components/MainLanding';
 import Navbar from './components/Navbar';
 import FooterSection from './components/FooterSection';
-import { FileText, ArrowRight } from 'lucide-react';
+import { filterExpiredHistory, isPrivacyModeActive, HISTORY_KEY, HistoryItem } from './utils/history';
 
 export default function App() {
   const {
@@ -26,8 +26,6 @@ export default function App() {
 
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [consultedAt, setConsultedAt] = useState<string | null>(null);
-  const [hiringAnalysis, setHiringAnalysis] = useState<HiringAnalysis | null>(null);
-  const [reportError, setReportError] = useState<string | null>(null);
 
   const handleHomeClick = () => {
     limpar();
@@ -37,27 +35,22 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const generateReport = async () => {
-    if (!data || !consultedAt) return;
-    setReportError(null);
-    try {
-      const { downloadCompanyReport } = await import('./utils/report');
-      downloadCompanyReport(data, consultedAt, hiringAnalysis);
-    } catch {
-      setReportError('Não foi possível gerar o relatório neste momento. Tente novamente em alguns instantes.');
-    }
-  };
-
-  // Sync successful search with local storage history
+  // Sync successful search with local storage history (if privacy mode is not active)
   useEffect(() => {
     if (data) {
       const timestamp = new Date().toISOString();
       setConsultedAt(timestamp);
-      setHiringAnalysis(null);
       try {
-        const historyCached = localStorage.getItem('premium_cnpj_history');
-        let historyList = historyCached ? JSON.parse(historyCached) : [];
+        if (isPrivacyModeActive()) {
+          return;
+        }
+
+        const historyCached = localStorage.getItem(HISTORY_KEY);
+        let historyList: HistoryItem[] = historyCached ? JSON.parse(historyCached) : [];
         if (!Array.isArray(historyList)) historyList = [];
+
+        // Prune entries older than 7 days
+        historyList = filterExpiredHistory(historyList);
 
         const cnpjClean = (data?.estabelecimento?.cnpj || data?.cnpj || '').replace(/\D/g, '');
         if (cnpjClean) {
@@ -77,14 +70,16 @@ export default function App() {
             historyList.pop();
           }
 
-          localStorage.setItem('premium_cnpj_history', JSON.stringify(historyList));
+          localStorage.setItem(HISTORY_KEY, JSON.stringify(historyList));
           const url = new URL(window.location.href);
           url.searchParams.set('cnpj', cnpjClean);
           window.history.replaceState({}, '', url.toString());
           setRefreshTrigger((prev) => prev + 1);
         }
       } catch (e) {
-        console.error('Falha ao registrar histórico:', e);
+        if (import.meta.env.DEV) {
+          console.error('Falha ao registrar histórico:', e);
+        }
       }
     }
   }, [data]);
@@ -133,36 +128,9 @@ export default function App() {
                   onFavoriteToggle={() => setRefreshTrigger((prev) => prev + 1)}
                 />
 
-                <BusinessAnalysis data={data} onAnalysis={setHiringAnalysis} />
+                <BusinessAnalysis data={data} />
 
                 <CompanyComparison currentData={data} />
-
-                {/* PDF Export Banner */}
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-2xl border border-[#2d2b28] bg-[#141415] p-5 shadow-lg">
-                  <div className="flex items-start gap-3">
-                    <div className="p-2.5 rounded-xl bg-[#181819] border border-[#2d2b28] text-[#dac5a7]">
-                      <FileText className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold text-white">Relatório de Análise Empresarial</p>
-                      <p className="mt-0.5 text-xs text-[#9e9b97]">PDF executivo diagramado com os dados disponíveis e a análise cadastral.</p>
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => void generateReport()}
-                    className="min-h-11 px-5 py-2.5 rounded-xl bg-[#dac5a7] text-[#0c0c0d] hover:bg-[#edd6b6] text-xs sm:text-sm font-bold transition flex items-center gap-2 cursor-pointer active:scale-95 shrink-0 shadow-sm"
-                  >
-                    <span>Exportar Relatório PDF</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                </div>
-
-                {reportError && (
-                  <p role="alert" className="text-sm text-red-400 px-2 font-mono">
-                    {reportError}
-                  </p>
-                )}
 
                 {consultedAt && <ConsultationSources consultedAt={consultedAt} />}
 

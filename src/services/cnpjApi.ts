@@ -1,3 +1,5 @@
+import { isValidCnpj } from '../utils/cnpj';
+
 export interface CnpjApiResponse {
   success: boolean;
   data: any | null;
@@ -113,4 +115,3 @@ export async function fetchCnpj(cnpj: string, timeoutMs: number = 15000): Promis
     };
   }
 }
-import { isValidCnpj } from '../utils/cnpj';

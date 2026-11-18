@@ -14,7 +14,7 @@ export default function BusinessAnalysis({
   onAnalysis,
 }: {
   data: any;
-  onAnalysis: (result: HiringAnalysis | null) => void;
+  onAnalysis?: (result: HiringAnalysis | null) => void;
 }) {
   const view = useMemo(() => companyView(data), [data]);
   const [purpose, setPurpose] = useState('Fornecedor');
@@ -26,7 +26,7 @@ export default function BusinessAnalysis({
     const compatibility = assessCompatibility(data, service);
     const next = { purpose, service, ...compatibility };
     setResult(next);
-    onAnalysis(next);
+    onAnalysis?.(next);
   }
 
   return (

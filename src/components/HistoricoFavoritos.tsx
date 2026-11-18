@@ -1,22 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { formatCNPJ } from '../utils/formatters';
-import { Clock, Star, Trash2, X, ExternalLink } from 'lucide-react';
-
-interface HistoryItem {
-  razaoSocial: string;
-  cnpj: string;
-  cidade: string;
-  uf: string;
-  consultadoEm: string;
-}
-
-interface FavoriteItem {
-  razaoSocial: string;
-  cnpj: string;
-  cidade: string;
-  uf: string;
-  favoritadoEm: string;
-}
+import { Clock, Star, Trash2, X, ExternalLink, Shield, ShieldCheck } from 'lucide-react';
+import {
+  filterExpiredHistory,
+  isPrivacyModeActive,
+  setPrivacyMode,
+  clearAllLocalData,
+  HISTORY_KEY,
+  FAVORITES_KEY,
+  HistoryItem,
+  FavoriteItem,
+} from '../utils/history';
 
 interface HistoricoFavoritosProps {
   onSelect: (cnpj: string) => void;
@@ -32,36 +26,50 @@ export default function HistoricoFavoritos({
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
   const [activeTab, setActiveTab] = useState<'history' | 'favorites'>('history');
+  const [privacyMode, setPrivacyModeState] = useState<boolean>(() => isPrivacyModeActive());
 
   const loadData = () => {
     try {
-      const historyCached = localStorage.getItem('premium_cnpj_history');
+      setPrivacyModeState(isPrivacyModeActive());
+
+      const historyCached = localStorage.getItem(HISTORY_KEY);
       if (historyCached) {
         try {
           const parsed = JSON.parse(historyCached);
-          setHistory(Array.isArray(parsed) ? parsed : []);
+          if (Array.isArray(parsed)) {
+            // Automatically prune history entries older than 7 days (preserving favorites)
+            const freshHistory = filterExpiredHistory(parsed);
+            if (freshHistory.length !== parsed.length) {
+              localStorage.setItem(HISTORY_KEY, JSON.stringify(freshHistory));
+            }
+            setHistory(freshHistory);
+          } else {
+            setHistory([]);
+          }
         } catch {
-          localStorage.removeItem('premium_cnpj_history');
+          localStorage.removeItem(HISTORY_KEY);
           setHistory([]);
         }
       } else {
         setHistory([]);
       }
 
-      const favsCached = localStorage.getItem('premium_cnpj_favorites');
+      const favsCached = localStorage.getItem(FAVORITES_KEY);
       if (favsCached) {
         try {
           const parsed = JSON.parse(favsCached);
           setFavorites(Array.isArray(parsed) ? parsed : []);
         } catch {
-          localStorage.removeItem('premium_cnpj_favorites');
+          localStorage.removeItem(FAVORITES_KEY);
           setFavorites([]);
         }
       } else {
         setFavorites([]);
       }
     } catch (e) {
-      console.error('Erro ao ler localStorage:', e);
+      if (import.meta.env.DEV) {
+        console.error('Erro ao ler localStorage:', e);
+      }
     }
   };
 
@@ -69,58 +77,67 @@ export default function HistoricoFavoritos({
     loadData();
   }, [refreshTrigger]);
 
+  const handleTogglePrivacyMode = () => {
+    const next = !privacyMode;
+    setPrivacyMode(next);
+    setPrivacyModeState(next);
+  };
+
   const handleClearHistory = () => {
     try {
-      localStorage.removeItem('premium_cnpj_history');
+      localStorage.removeItem(HISTORY_KEY);
       setHistory([]);
     } catch (e) {
-      console.error(e);
+      if (import.meta.env.DEV) console.error(e);
     }
+  };
+
+  const handleClearAll = () => {
+    clearAllLocalData();
+    setHistory([]);
+    setFavorites([]);
   };
 
   const handleRemoveFavorite = (cnpjToRemove: string, e: React.MouseEvent) => {
     e.stopPropagation();
     try {
-      const favsCached = localStorage.getItem('premium_cnpj_favorites');
+      const favsCached = localStorage.getItem(FAVORITES_KEY);
       if (favsCached) {
         const parsed = JSON.parse(favsCached);
         if (Array.isArray(parsed)) {
           const favsList = parsed.filter((item) => item && item.cnpj !== cnpjToRemove);
-          localStorage.setItem('premium_cnpj_favorites', JSON.stringify(favsList));
+          localStorage.setItem(FAVORITES_KEY, JSON.stringify(favsList));
           setFavorites(favsList);
         }
       }
     } catch (e) {
-      console.error(e);
+      if (import.meta.env.DEV) console.error(e);
     }
   };
 
   const handleRemoveHistoryItem = (cnpjToRemove: string, e: React.MouseEvent) => {
     e.stopPropagation();
     try {
-      const historyCached = localStorage.getItem('premium_cnpj_history');
+      const historyCached = localStorage.getItem(HISTORY_KEY);
       if (historyCached) {
         const parsed = JSON.parse(historyCached);
         if (Array.isArray(parsed)) {
           const historyList = parsed.filter((item) => item && item.cnpj !== cnpjToRemove);
-          localStorage.setItem('premium_cnpj_history', JSON.stringify(historyList));
+          localStorage.setItem(HISTORY_KEY, JSON.stringify(historyList));
           setHistory(historyList);
         }
       }
     } catch (err) {
-      console.error(err);
+      if (import.meta.env.DEV) console.error(err);
     }
   };
-
-  if (history.length === 0 && favorites.length === 0) {
-    return null;
-  }
 
   return (
     <section className="w-full max-w-5xl mx-auto space-y-4 text-left animate-fade-in" id="local-history-favorites-section" aria-label="Histórico de Consultas e Favoritos">
       <h2 className="sr-only">Histórico de Consultas e Favoritos Salvos</h2>
-      {/* Header with tabs */}
-      <div className="flex items-center justify-between border-b border-white/[0.08] pb-1">
+      
+      {/* Header with tabs & Privacy Controls */}
+      <div className="flex flex-wrap items-center justify-between border-b border-white/[0.08] pb-1 gap-2">
         <div className="flex items-center gap-1">
           <button
             type="button"
@@ -157,23 +174,72 @@ export default function HistoricoFavoritos({
           </button>
         </div>
 
-        {activeTab === 'history' && history.length > 0 && (
+        <div className="flex items-center gap-2">
+          {/* Privacy Mode Toggle */}
           <button
             type="button"
-            onClick={handleClearHistory}
-            className="inline-flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-wider text-zinc-500 hover:text-red-400 px-3 py-1.5 rounded-lg border border-transparent hover:border-red-950/40 hover:bg-red-950/20 transition active:scale-95"
+            onClick={handleTogglePrivacyMode}
+            className={`inline-flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-wider px-3 py-1.5 rounded-lg border transition cursor-pointer active:scale-95 ${
+              privacyMode
+                ? 'bg-emerald-950/40 border-emerald-700/60 text-emerald-300'
+                : 'bg-zinc-900/60 border-white/[0.08] text-zinc-400 hover:text-zinc-200 hover:border-white/[0.15]'
+            }`}
+            title={privacyMode ? 'Modo Privacidade ativado: novas consultas não são gravadas no navegador' : 'Ativar Modo Privacidade'}
           >
-            <Trash2 className="w-3.5 h-3.5" />
-            <span>Limpar Histórico</span>
+            {privacyMode ? (
+              <>
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Privacidade: Ativa</span>
+              </>
+            ) : (
+              <>
+                <Shield className="w-3.5 h-3.5 text-zinc-500" />
+                <span>Privacidade: Inativa</span>
+              </>
+            )}
           </button>
-        )}
+
+          {/* Clear Controls */}
+          {activeTab === 'history' && history.length > 0 && (
+            <button
+              type="button"
+              onClick={handleClearHistory}
+              className="inline-flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-wider text-zinc-500 hover:text-red-400 px-3 py-1.5 rounded-lg border border-transparent hover:border-red-950/40 hover:bg-red-950/20 transition active:scale-95 cursor-pointer"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              <span>Limpar Histórico</span>
+            </button>
+          )}
+
+          {(history.length > 0 || favorites.length > 0) && (
+            <button
+              type="button"
+              onClick={handleClearAll}
+              title="Exclui histórico, favoritos e dados da sessão local deste dispositivo"
+              className="inline-flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-wider text-zinc-500 hover:text-red-400 px-3 py-1.5 rounded-lg border border-transparent hover:border-red-950/40 hover:bg-red-950/20 transition active:scale-95 cursor-pointer"
+            >
+              <Trash2 className="w-3.5 h-3.5 text-red-500/70" />
+              <span>Limpar Tudo</span>
+            </button>
+          )}
+        </div>
       </div>
+
+      {/* Privacy Mode Active Info Banner */}
+      {privacyMode && (
+        <div className="flex items-center justify-between p-3 rounded-xl border border-emerald-900/40 bg-emerald-950/20 text-xs text-emerald-300 font-mono">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+            <span>Modo Privacidade Ativo: novas consultas não serão armazenadas neste dispositivo.</span>
+          </div>
+        </div>
+      )}
 
       {/* Tab Panels */}
       {activeTab === 'history' ? (
         history.length === 0 ? (
           <div className="py-8 text-center text-zinc-500 text-xs font-mono">
-            Nenhuma consulta realizada recentemente no dispositivo.
+            Nenhuma consulta realizada recentemente no dispositivo (expiração automática após 7 dias).
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -224,7 +290,7 @@ export default function HistoricoFavoritos({
       ) : (
         favorites.length === 0 ? (
           <div className="py-8 text-center text-zinc-500 text-xs font-mono">
-            Nenhum CNPJ favoritado ainda. Salve empresas pelo botão de estrela na página de resultados.
+            Nenhum CNPJ favoritado ainda. Salve empresas pelo botão de estrela na página de resultados (favoritos são permanentes e não expiram).
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { fetchCnpj, CnpjApiResponse } from '../services/cnpjApi';
+import { isPrivacyModeActive } from '../utils/history';
 
 export interface UseCNPJResult {
   isLoading: boolean;
@@ -30,7 +31,9 @@ export function useCNPJ(): UseCNPJResult {
         }
       }
     } catch (e) {
-      console.error('Failed to parse cached CNPJ result:', e);
+      if (import.meta.env.DEV) {
+        console.error('Failed to parse cached CNPJ result:', e);
+      }
     }
   }, []);
 
@@ -47,7 +50,11 @@ export function useCNPJ(): UseCNPJResult {
         setError(null);
         setErrorType(null);
         try {
-          sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(response.data));
+          if (!isPrivacyModeActive()) {
+            sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(response.data));
+          } else {
+            sessionStorage.removeItem(SESSION_STORAGE_KEY);
+          }
         } catch (e) {
           // Local storage quota exceeded or disabled
         }

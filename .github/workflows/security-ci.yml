@@ -1,0 +1,44 @@
+name: Security & Quality Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  security-audit:
+    name: Security Audit & Verification
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Deterministic Install
+        run: npm ci --ignore-scripts
+
+      - name: Automated Secret Scanner
+        run: npm run security:check-secrets
+
+      - name: Production Dependency Audit
+        run: npm audit --omit=dev
+
+      - name: Static Typecheck
+        run: npm run typecheck
+
+      - name: Automated Test Suite (Vitest)
+        run: npm test
+
+      - name: Production Build
+        run: npm run build
