@@ -44,7 +44,7 @@ export default function MethodologySection() {
               Separação Rigorosa de Fatos
             </h3>
             <p className="text-xs sm:text-sm text-[#9e9b97] leading-relaxed">
-              A situação cadastral, capital social, data de abertura e quadro societário são reproduções fiéis dos registros da Receita Federal. Análises de compatibilidade são claramente demarcadas como hipóteses de auxílio.
+              A situação cadastral, capital social, data de abertura e quadro societário são reproduções fiéis dos registros da Receita Federal. Todas as métricas de contexto são derivadas exclusivamente de fontes oficiais.
             </p>
           </div>
 

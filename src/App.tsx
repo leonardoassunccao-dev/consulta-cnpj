@@ -7,7 +7,6 @@ import VisualizadorEmpresaTabs from './components/VisualizadorEmpresaTabs';
 import ErrorBoundary from './components/ErrorBoundary';
 import BusinessAnalysis from './components/BusinessAnalysis';
 import ConsultationSources from './components/ConsultationSources';
-import CompanyComparison from './components/CompanyComparison';
 import HeroSection from './components/HeroSection';
 import MainLanding from './components/MainLanding';
 import Navbar from './components/Navbar';
@@ -129,8 +128,6 @@ export default function App() {
                 />
 
                 <BusinessAnalysis data={data} />
-
-                <CompanyComparison currentData={data} />
 
                 {consultedAt && <ConsultationSources consultedAt={consultedAt} />}
 

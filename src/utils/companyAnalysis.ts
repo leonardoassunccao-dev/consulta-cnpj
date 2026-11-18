@@ -1,7 +1,5 @@
 import { formatDate, formatFallback } from './formatters';
 
-export type CompatibilityLevel = 'Alta' | 'Parcial' | 'Não identificada';
-
 export interface CompanyView {
   cnpj: string;
   legalName: string;
@@ -65,18 +63,3 @@ export function attentionPoints(view: CompanyView): string[] {
   return points;
 }
 
-const STOP_WORDS = new Set(['de','da','do','das','dos','e','em','para','por','com','servico','serviços','atividade','atividades','empresa','empresas']);
-const tokens = (value: string) => value.toLocaleLowerCase('pt-BR').normalize('NFD').replace(/[\u0300-\u036f]/g, '').split(/[^a-z0-9]+/).filter(token => token.length > 2 && !STOP_WORDS.has(token));
-
-export function assessCompatibility(data: any, expectedService: string): { level: CompatibilityLevel; explanation: string } {
-  const view = companyView(data);
-  const serviceTokens = tokens(expectedService);
-  const activities = [view.primaryActivity, ...view.secondaryActivities].filter(Boolean) as Array<{ code: string; description: string }>;
-  if (!expectedService.trim() || !activities.length) return { level: 'Não identificada', explanation: 'Não há informação suficiente para comparar o serviço informado com as atividades disponíveis.' };
-  const matches = activities.filter(activity => serviceTokens.some(token => tokens(activity.description).includes(token)));
-  if (matches.length) {
-    const primaryMatch = view.primaryActivity && matches.some(item => item.code === view.primaryActivity?.code);
-    return { level: primaryMatch ? 'Alta' : 'Parcial', explanation: `As atividades cadastradas incluem “${matches[0].description}”, com correspondência ${primaryMatch ? 'direta' : 'parcial'} ao serviço informado.` };
-  }
-  return { level: 'Não identificada', explanation: 'Não foi encontrada, entre as atividades econômicas disponíveis, uma correspondência clara com o serviço informado. Recomenda-se verificação adicional.' };
-}
